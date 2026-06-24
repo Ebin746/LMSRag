@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 
-from fastapi import FastAPI,UploadFile,File
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from langchain_google_genai import (
@@ -9,123 +10,137 @@ from langchain_google_genai import (
     ChatGoogleGenerativeAI,
 )
 
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import (
+    PyPDFLoader,
+)
 
 from langchain_text_splitters import (
-    RecursiveCharacterTextSplitter
-
+    RecursiveCharacterTextSplitter,
 )
 
-from langchain_community.vectorstores import FAISS
-
-from langchain.chains.question_answering import (
-    load_qa_chain,
+from langchain_community.vectorstores import (
+    FAISS,
 )
+
 load_dotenv()
-from fastapi.middleware.cors import CORSMiddleware
-app=FastAPI()
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
-vector_store=None
+vector_store = None
 
-embeddings=GoogleGenerativeAIEmbeddings(
+embeddings = GoogleGenerativeAIEmbeddings(
     model="gemini-embedding-2"
-
 )
 
-llm=ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    temperature=0.4
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3-flash-preview",
+    temperature=0,
 )
 
 
-@app.get("/api/health")
+class QuestionRequest(BaseModel):
+    question: str
+
+
+@app.get("/")
 def home():
-    return {"message":"Rag backend running"}
+    return {
+        "message": "RAG Backend Running"
+    }
 
 
 @app.post("/upload")
 async def upload_pdf(
-    file:UploadFile=File(...)
-
+    file: UploadFile = File(...)
 ):
     global vector_store
 
     os.makedirs(
         "uploads",
-        exist_ok=True
+        exist_ok=True,
     )
 
-    file_path=(
-        f"uploads/{file.filename}"
+    file_path = os.path.join(
+        "uploads",
+        file.filename,
     )
 
-    with open(file_path ,"wb") as f:
+    with open(file_path, "wb") as f:
         f.write(await file.read())
 
-    loader=PyPDFLoader(file_path)
-    docs=loader.load()
-
-
-    splitter=(
-        RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200
-
-        )   
+    loader = PyPDFLoader(
+        file_path
     )
 
-    chunks=splitter.split_documents(
+    docs = loader.load()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+    )
+
+    chunks = splitter.split_documents(
         docs
     )
 
-    vector_store=(
-        FAISS.from_documents(
-            chunks,
-            embeddings
-        )
-
+    vector_store = FAISS.from_documents(
+        chunks,
+        embeddings,
     )
 
-class QuestionsRequest(BaseModel):
-    qustion:str
+    return {
+        "message": "PDF uploaded successfully",
+        "chunks": len(chunks),
+    }
+
 
 @app.post("/chat")
-async def chat(
-    request:QuestionsRequest
+async def ask_question(
+    request: QuestionRequest
 ):
     global vector_store
-    if vector_store is None :
+
+    if vector_store is None:
         return {
-            "answere":
-            "Please upload a pdf first"
-
+            "error": "Upload a PDF first"
         }
-    
-    docs=(
-        vector_store.similarity_search(
-            request.question,
-            k=4
-        )
+    docs = vector_store.similarity_search(
+        request.question,
+        k=3,
     )
 
-
-    chain=load_qa_chain(
-        llm,
-        chain_type="stuff"
-
+    context = "\n\n".join(
+        doc.page_content
+        for doc in docs
     )
-    response=chain.run(
-        input_document=docs,
-        question=request.question,
+
+    prompt = f"""
+You are a helpful LMS assistant.
+
+Answer ONLY from the provided context.
+
+If the answer is not present in the context,
+say "I could not find that information in the document."
+
+Context:
+{context}
+
+Question:
+{request.question}
+"""
+
+    response = llm.invoke(
+        prompt
     )
+    print(response.content)
+    answer = response.content[0]["text"]
     return {
-        "answere":response
+        "answer": answer
     }
