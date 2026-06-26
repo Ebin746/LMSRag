@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-
+load_dotenv()
+from database.supabase_client import supabase
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -18,11 +19,7 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
-from langchain_community.vectorstores import (
-    FAISS,
-)
 
-load_dotenv()
 app = FastAPI()
 
 app.add_middleware(
@@ -33,10 +30,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-vector_store = None
+
 
 embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-2"
+    model="gemini-embedding-2",
+      output_dimensionality=768
 )
 
 llm = ChatGoogleGenerativeAI(
@@ -60,7 +58,7 @@ def home():
 async def upload_pdf(
     file: UploadFile = File(...)
 ):
-    global vector_store
+
 
     os.makedirs(
         "uploads",
@@ -86,14 +84,25 @@ async def upload_pdf(
         chunk_overlap=200,
     )
 
-    chunks = splitter.split_documents(
-        docs
-    )
+    chunks = splitter.split_documents(docs)
 
-    vector_store = FAISS.from_documents(
-        chunks,
-        embeddings,
-    )
+    doc = supabase.table("documents").insert({
+        "filename": file.filename
+    }).execute()
+
+    document_id = doc.data[0]["id"]
+
+    for chunk in chunks:
+
+        vector = embeddings.embed_query(
+         chunk.page_content
+        )
+
+        supabase.table("document_chunks").insert({
+        "document_id": document_id,
+        "content": chunk.page_content,
+        "embedding": vector
+        }).execute()
 
     return {
         "message": "PDF uploaded successfully",
@@ -105,21 +114,21 @@ async def upload_pdf(
 async def ask_question(
     request: QuestionRequest
 ):
-    global vector_store
-
-    if vector_store is None:
-        return {
-            "error": "Upload a PDF first"
+  
+    query_embedding = embeddings.embed_query(
+            request.question
+                )
+    results = supabase.rpc(
+        "match_documents",
+        {
+        "query_embedding": query_embedding,
+        "match_count": 3
         }
-    docs = vector_store.similarity_search(
-        request.question,
-        k=3,
-    )
+        ).execute()
+    context = ""
 
-    context = "\n\n".join(
-        doc.page_content
-        for doc in docs
-    )
+    for row in results.data:
+        context += row["content"] + "\n\n"
 
     prompt = f"""
 You are a helpful LMS assistant.
@@ -139,8 +148,8 @@ Question:
     response = llm.invoke(
         prompt
     )
-    print(response.content)
     answer = response.content[0]["text"]
+    print(answer)
     return {
         "answer": answer
     }
