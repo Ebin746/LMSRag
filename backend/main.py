@@ -1,25 +1,26 @@
 # app/main.py
 
 from fastapi import FastAPI
-
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 
+# Routers
+from api.auth import router as auth_router
 from api.upload import router as upload_router
 from api.chat import router as chat_router
 
 
 app = FastAPI(
     title="LMS RAG API",
-    description="Production Ready RAG Backend",
-    version="1.0.0"
+    description="Production Ready Role-Based LMS RAG Backend",
+    version="1.1.0",
 )
 
 
-# -----------------------------
+# --------------------------------------------------------
 # CORS
-# -----------------------------
+# --------------------------------------------------------
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,28 +31,34 @@ app.add_middleware(
 )
 
 
-# -----------------------------
-# Routers
-# -----------------------------
+# --------------------------------------------------------
+# Register Routers
+# --------------------------------------------------------
+
+app.include_router(auth_router)
 
 app.include_router(upload_router)
 
 app.include_router(chat_router)
 
 
-# -----------------------------
-# Health Check
-# -----------------------------
+# --------------------------------------------------------
+# Root
+# --------------------------------------------------------
 
 @app.get("/")
 async def home():
 
     return {
         "status": "running",
-        "message": "LMS RAG Backend",
-        "version": "1.0.0"
+        "project": "LMS Role-Based RAG",
+        "version": "1.1.0",
     }
 
+
+# --------------------------------------------------------
+# Health Check
+# --------------------------------------------------------
 
 @app.get("/health")
 async def health():
