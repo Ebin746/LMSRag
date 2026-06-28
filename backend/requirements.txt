@@ -1,14 +1,62 @@
+# ============================
+# FastAPI
+# ============================
 fastapi
 uvicorn[standard]
 python-multipart
 
-langchain
-langchain-google-genai
-langchain-community
+# ============================
+# Environment Variables
+# ============================
+python-dotenv
 
+# ============================
+# Authentication
+# ============================
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+email-validator
+
+# ============================
+# Pydantic
+# ============================
+pydantic
+
+# ============================
+# Google Gemini
+# ============================
+google-generativeai
+langchain-google-genai
+
+# ============================
+# LangChain
+# ============================
+langchain
+langchain-community
+langchain-text-splitters
+
+# ============================
+# PDF Processing
+# ============================
 pypdf
 
+# ============================
+# Vector Database
+# ============================
 chromadb
+
+# ============================
+# Supabase
+# ============================
 supabase
 
-python-dotenv
+# ============================
+# HTTP Client
+# ============================
+httpx
+
+# ============================
+# Optional (Recommended)
+# ============================
+typing_extensions

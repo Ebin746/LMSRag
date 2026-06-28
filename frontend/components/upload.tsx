@@ -18,10 +18,14 @@ export default function Upload() {
     });
 
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(
-        "http://localhost:8000/upload/",
+        "/api/upload/",
         {
           method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
           body: formData,
         }
       );

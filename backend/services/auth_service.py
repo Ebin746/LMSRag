@@ -60,3 +60,51 @@ def login_user(
             role=user["role"]
         )
     )
+
+def signup_user(
+        name: str,
+        email: str,
+        phone: str,
+        password: str
+) -> LoginResponse:
+    # Check if user exists
+    existing = supabase.table("users").select("*").eq("email", email).limit(1).execute()
+    if existing.data:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    from core.security import get_password_hash
+    import uuid
+
+    user_id = str(uuid.uuid4())
+    hashed_password = get_password_hash(password)
+
+    new_user = {
+        "id": user_id,
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "password": hashed_password,
+        "role": "student"
+    }
+
+    # Insert user
+    supabase.table("users").insert(new_user).execute()
+
+    # Generate token
+    access_token = create_access_token(
+        {
+            "user_id": user_id,
+            "email": email,
+            "role": "student",
+        }
+    )
+
+    return LoginResponse(
+        access_token=access_token,
+        user=UserResponse(
+            id=user_id,
+            name=name,
+            email=email,
+            role="student"
+        )
+    )

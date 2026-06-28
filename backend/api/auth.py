@@ -4,10 +4,11 @@ from fastapi import APIRouter
 
 from models.auth_schema import (
     LoginRequest,
+    SignupRequest,
     LoginResponse,
 )
 
-from services.auth_service import login_user
+from services.auth_service import login_user, signup_user
 
 
 router = APIRouter(
@@ -25,5 +26,19 @@ async def login(
 ):
     return login_user(
         email=request.email,
+        password=request.password,
+    )
+
+@router.post(
+    "/signup",
+    response_model=LoginResponse,
+)
+async def signup(
+    request: SignupRequest,
+):
+    return signup_user(
+        name=request.name,
+        email=request.email,
+        phone=request.phone,
         password=request.password,
     )

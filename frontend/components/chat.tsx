@@ -20,13 +20,15 @@ export default function Chat() {
     setLoading(true);
 
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(
-        "http://localhost:8000/chat/",
+        "/api/chat/",
         {
           method: "POST",
           headers: {
             "Content-Type":
               "application/json",
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             question,

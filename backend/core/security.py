@@ -1,138 +1,105 @@
-# app/core/config.py
+# app/core/security.py
 
-import os
-from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
+from typing import Any
 
-load_dotenv()
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
+from core.config import settings
 
 
-class Settings:
+# ------------------------------------------------------------------
+# Password Hashing Configuration
+# ------------------------------------------------------------------
 
-    # ----------------------------------------------------
-    # Google Gemini
-    # ----------------------------------------------------
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+   deprecated="auto"
+)
 
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-    CHAT_MODEL = os.getenv(
-        "CHAT_MODEL",
-        "gemini-3.5-flash"
+# ------------------------------------------------------------------
+# Password Functions
+# ------------------------------------------------------------------
+
+def hash_password(password: str) -> str:
+    """
+    Hash a plain-text password before storing it in the database.
+    """
+    return pwd_context.hash(password)
+
+
+def verify_password(
+    plain_password: str,
+    hashed_password: str,
+) -> bool:
+    """
+    Verify whether the given password matches
+    the stored hashed password.
+    """
+    return pwd_context.verify(
+        plain_password,
+        hashed_password,
     )
 
-    EMBEDDING_MODEL = os.getenv(
-        "EMBEDDING_MODEL",
-        "gemini-embedding-2"
+
+# ------------------------------------------------------------------
+# JWT Functions
+# ------------------------------------------------------------------
+
+def create_access_token(
+    data: dict[str, Any],
+) -> str:
+    """
+    Create a JWT access token.
+
+    'data' should contain only safe information,
+    e.g.:
+        {
+            "user_id": "...",
+            "email": "...",
+            "role": "student"
+        }
+    """
+
+    to_encode = data.copy()
+
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
-    EMBEDDING_DIMENSION = int(
-        os.getenv(
-            "EMBEDDING_DIMENSION",
-            768,
-        )
+    to_encode.update(
+        {
+            "exp": expire
+        }
     )
 
-    # ----------------------------------------------------
-    # JWT Authentication
-    # ----------------------------------------------------
-
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-
-    JWT_ALGORITHM = os.getenv(
-        "JWT_ALGORITHM",
-        "HS256"
+    encoded_jwt = jwt.encode(
+        to_encode,
+        settings.JWT_SECRET_KEY,
+        algorithm=settings.JWT_ALGORITHM,
     )
 
-    ACCESS_TOKEN_EXPIRE_MINUTES = int(
-        os.getenv(
-            "ACCESS_TOKEN_EXPIRE_MINUTES",
-            60,
-        )
+    return encoded_jwt
+
+
+def decode_access_token(
+    token: str,
+) -> dict:
+    """
+    Decode a JWT token.
+
+    Raises JWTError if:
+        - Token is invalid
+        - Token expired
+        - Signature mismatch
+    """
+
+    payload = jwt.decode(
+        token,
+        settings.JWT_SECRET_KEY,
+        algorithms=[settings.JWT_ALGORITHM],
     )
 
-    # ----------------------------------------------------
-    # Supabase
-    # ----------------------------------------------------
-
-    SUPABASE_URL = os.getenv("SUPABASE_URL")
-
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-    # ----------------------------------------------------
-    # ChromaDB
-    # ----------------------------------------------------
-
-    CHROMA_PERSIST_DIR = os.getenv(
-        "CHROMA_PERSIST_DIR",
-        "chroma_store"
-    )
-
-    CHROMA_COLLECTION_NAME = os.getenv(
-        "CHROMA_COLLECTION_NAME",
-        "lms_documents"
-    )
-
-    # ----------------------------------------------------
-    # Upload
-    # ----------------------------------------------------
-
-    UPLOAD_DIR = os.getenv(
-        "UPLOAD_DIR",
-        "uploads"
-    )
-
-    MAX_FILE_SIZE = 20 * 1024 * 1024
-
-    # ----------------------------------------------------
-    # Chunking
-    # ----------------------------------------------------
-
-    CHUNK_SIZE = 800
-
-    CHUNK_OVERLAP = 150
-
-    # ----------------------------------------------------
-    # Retrieval
-    # ----------------------------------------------------
-
-    TOP_K = 5
-
-    # ----------------------------------------------------
-    # CORS
-    # ----------------------------------------------------
-
-    ALLOWED_ORIGINS = os.getenv(
-        "ALLOWED_ORIGINS",
-        "http://localhost:3000",
-    ).split(",")
-
-    # ----------------------------------------------------
-    # Validation
-    # ----------------------------------------------------
-
-    @staticmethod
-    def validate():
-
-        required = [
-
-            "GOOGLE_API_KEY",
-
-            "SUPABASE_URL",
-
-            "SUPABASE_KEY",
-
-            "JWT_SECRET_KEY",
-
-        ]
-
-        for key in required:
-
-            if not os.getenv(key):
-
-                raise Exception(
-                    f"{key} is missing."
-                )
-
-
-settings = Settings()
-
-settings.validate()
+    return payload
