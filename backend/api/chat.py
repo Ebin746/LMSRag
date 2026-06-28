@@ -1,46 +1,68 @@
-# app/api/chat.py
-
-from fastapi import APIRouter, HTTPException
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends,
+)
 
 from models.schemas import QuestionRequest
+
 from services.rag_service import ask_rag
+
+from core.dependencies import require_authenticated_user
 
 
 router = APIRouter(
     prefix="/chat",
-    tags=["Chat"]
+    tags=["Chat"],
 )
 
 
 @router.post("/")
 async def chat(
-    request: QuestionRequest
+    request: QuestionRequest,
+    current_user: dict = Depends(require_authenticated_user),
 ):
     """
-    Ask questions to the RAG system.
+    Ask questions to the LMS RAG.
+    Authentication required.
     """
 
     question = request.question.strip()
 
     if not question:
+
         raise HTTPException(
             status_code=400,
-            detail="Question cannot be empty."
+            detail="Question cannot be empty.",
         )
 
     try:
-        print("question",question)
-        print("type",type(question))
-        result = ask_rag(question)
-        print(result["answer"])
+
+        result = ask_rag(
+            question=question,
+
+            # These are placeholders for now.
+            # We'll fetch the actual values from
+            # enrollments later.
+            course_id=None,
+            module_id=None,
+            batch_id=None,
+        )
+
         return {
             "success": True,
+            "user": {
+                "id": current_user["id"],
+                "role": current_user["role"],
+                "name": current_user["name"],
+            },
             "answer": result["answer"],
-            "sources": result["sources"]
+            "sources": result["sources"],
         }
 
     except Exception as e:
 
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )

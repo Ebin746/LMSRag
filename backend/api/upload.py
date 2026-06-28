@@ -1,25 +1,33 @@
+
 import os
+
 from fastapi import (
     APIRouter,
     UploadFile,
     File,
     Form,
     HTTPException,
+    Depends,
 )
+
 from typing import Optional
 
 from database.supabase_client import supabase
+
 from services.pdf_service import (
     process_pdf,
     delete_pdf,
 )
+
 from services.embedding_service import embed_documents
 from services.vector_service import add_chunks
+
+from core.dependencies import require_admin
 
 
 router = APIRouter(
     prefix="/upload",
-    tags=["Upload"]
+    tags=["Upload"],
 )
 
 
@@ -29,26 +37,17 @@ async def upload_pdfs(
     course_id: Optional[str] = Form(None),
     module_id: Optional[str] = Form(None),
     batch_id: Optional[str] = Form(None),
+
+    current_user: dict = Depends(require_admin),
 ):
     """
-    Upload one or more PDFs.
-
-    Optional form fields:
-      - course_id  : Supabase UUID of the course this document belongs to
-      - module_id  : Supabase UUID of the module
-      - batch_id   : Supabase UUID of the batch
-
-    Flow
-    ────
-    1. Process PDF → chunks
-    2. Embed chunks (Gemini RETRIEVAL_DOCUMENT)
-    3. Insert metadata record into Supabase documents table
-    4. Upsert embeddings + rich metadata into ChromaDB via vector_service
+    Upload PDFs (Admin Only).
     """
+
     if len(files) == 0:
         raise HTTPException(
             status_code=400,
-            detail="No PDF uploaded."
+            detail="No PDF uploaded.",
         )
 
     uploaded_documents = []
@@ -58,37 +57,35 @@ async def upload_pdfs(
         if not file.filename.lower().endswith(".pdf"):
             raise HTTPException(
                 status_code=400,
-                detail=f"{file.filename} is not a PDF."
+                detail=f"{file.filename} is not a PDF.",
             )
 
         file_path = None
 
         try:
 
-            # -----------------------------------
-            # 1. Process PDF → chunks
-            # -----------------------------------
-
             file_path, chunks = process_pdf(file)
 
-            texts = [chunk["content"] for chunk in chunks]
-
-            # -----------------------------------
-            # 2. Batch Embeddings
-            # -----------------------------------
+            texts = [
+                chunk["content"]
+                for chunk in chunks
+            ]
 
             embeddings = embed_documents(texts)
 
-            # -----------------------------------
-            # 3. Insert document record (Supabase)
-            #    Keeps relational metadata intact.
-            # -----------------------------------
+            doc_payload = {
+                "filename": file.filename,
+                "uploaded_by": current_user["id"],
+            }
 
-            doc_payload: dict = {"filename": file.filename}
             if course_id:
                 doc_payload["course_id"] = course_id
+
             if module_id:
                 doc_payload["module_id"] = module_id
+
+            if batch_id:
+                doc_payload["batch_id"] = batch_id
 
             document = (
                 supabase
@@ -98,10 +95,6 @@ async def upload_pdfs(
             )
 
             document_id = document.data[0]["id"]
-
-            # -----------------------------------
-            # 4. Upsert chunks into ChromaDB
-            # -----------------------------------
 
             stored = add_chunks(
                 chunks=chunks,
@@ -116,19 +109,12 @@ async def upload_pdfs(
             uploaded_documents.append(
                 {
                     "document_id": document_id,
-                    "filename":    file.filename,
-                    "chunks":      stored,
-                    "course_id":   course_id,
-                    "module_id":   module_id,
-                    "batch_id":    batch_id,
+                    "filename": file.filename,
+                    "chunks": stored,
+                    "course_id": course_id,
+                    "module_id": module_id,
+                    "batch_id": batch_id,
                 }
-            )
-
-        except Exception as e:
-
-            raise HTTPException(
-                status_code=500,
-                detail=f"{file.filename} : {str(e)}"
             )
 
         finally:
@@ -137,7 +123,8 @@ async def upload_pdfs(
                 delete_pdf(file_path)
 
     return {
-        "message":            "Upload completed successfully.",
+        "message": "Upload completed successfully.",
+        "uploaded_by": current_user["name"],
         "documents_uploaded": len(uploaded_documents),
-        "documents":          uploaded_documents,
+        "documents": uploaded_documents,
     }
