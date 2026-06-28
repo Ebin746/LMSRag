@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 
 from models.schemas import QuestionRequest
-from service.rag_service import ask_rag
+from services.rag_service import ask_rag
 
 
 router = APIRouter(
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("")
 async def chat(
     request: QuestionRequest
 ):

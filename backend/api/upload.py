@@ -7,12 +7,12 @@ from fastapi import(
 ) 
 
 from database.supabase_client import supabase
-from service.pdf_service import(
+from services.pdf_service import(
     process_pdf,
     delete_pdf
 )
 
-from service.embedding_service import (
+from services.embedding_service import (
     embed_documents
 )
 
@@ -22,7 +22,7 @@ router=APIRouter(
     tags=["Upload"]
 )
 
-@router.post("/")
+@router.post("")
 async def upload_pdfs(
     files: list[UploadFile] = File(...)
 ):
