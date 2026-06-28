@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("")
+@router.post("/")
 async def chat(
     request: QuestionRequest
 ):
@@ -29,9 +29,10 @@ async def chat(
         )
 
     try:
-
+        print("question",question)
+        print("type",type(question))
         result = ask_rag(question)
-
+        print(result["answer"])
         return {
             "success": True,
             "answer": result["answer"],
@@ -40,7 +41,6 @@ async def chat(
 
     except Exception as e:
 
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

@@ -11,13 +11,17 @@ class Settings:
 
     # Google
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-    CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-2.5-flash")
-    EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
+    CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-3.5-flash")
+    EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-2")
     EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", 768))
 
-    # Supabase
+    # Supabase (relational data: users, courses, enrollments, batches, etc.)
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+    # ChromaDB (vector store for development)
+    CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "chroma_store")
+    CHROMA_COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME", "lms_documents")
 
     # Upload
     UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
@@ -33,7 +37,7 @@ class Settings:
     # CORS
     ALLOWED_ORIGINS = os.getenv(
         "ALLOWED_ORIGINS",
-        "http://localhost:5173"
+        "http://localhost:3000"
     ).split(",")
 
     @staticmethod
@@ -41,8 +45,6 @@ class Settings:
 
         required = [
             "GOOGLE_API_KEY",
-            "SUPABASE_URL",
-            "SUPABASE_KEY"
         ]
 
         for key in required:
