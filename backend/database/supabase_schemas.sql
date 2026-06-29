@@ -187,20 +187,26 @@ CREATE TABLE recorded_classes (
 CREATE TABLE documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+    filename TEXT NOT NULL,
 
-    module_id UUID REFERENCES modules(id) ON DELETE CASCADE,
+    uploaded_by UUID NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
 
-    title TEXT NOT NULL,
+    course_id UUID
+        REFERENCES courses(id)
+        ON DELETE CASCADE,
 
-    file_url TEXT NOT NULL,
+    module_id UUID
+        REFERENCES modules(id)
+        ON DELETE CASCADE,
 
-    role_access TEXT[] DEFAULT ARRAY['student'],
+    batch_id UUID
+        REFERENCES batches(id)
+        ON DELETE CASCADE,
 
     uploaded_at TIMESTAMP DEFAULT NOW()
-);
-
----------------------------------------------------
+);----------------------------------------
 
 -- ANNOUNCEMENTS
 CREATE TABLE announcements (

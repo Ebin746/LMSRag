@@ -93,7 +93,8 @@ async def upload_pdfs(
                 .insert(doc_payload)
                 .execute()
             )
-
+            if not document.data:
+                raise Exception(document)
             document_id = document.data[0]["id"]
 
             stored = add_chunks(
