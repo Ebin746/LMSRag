@@ -61,6 +61,7 @@ export default function LoginPage() {
 
       if (data.access_token) {
         localStorage.setItem("token", data.access_token);
+        console.log(data)
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
         }

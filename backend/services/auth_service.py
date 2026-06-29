@@ -72,11 +72,11 @@ def signup_user(
     if existing.data:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    from core.security import get_password_hash
+    from core.security import hash_password
     import uuid
 
     user_id = str(uuid.uuid4())
-    hashed_password = get_password_hash(password)
+    hashed_password = hash_password(password)
 
     new_user = {
         "id": user_id,

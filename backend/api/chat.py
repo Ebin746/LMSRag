@@ -5,7 +5,7 @@ from fastapi import (
 )
 
 from models.schemas import QuestionRequest
-
+from fastapi.security import HTTPBearer
 from services.rag_service import ask_rag
 
 from core.dependencies import require_authenticated_user
@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("")
 async def chat(
     request: QuestionRequest,
     current_user: dict = Depends(require_authenticated_user),
@@ -26,9 +26,8 @@ async def chat(
     Ask questions to the LMS RAG.
     Authentication required.
     """
-
     question = request.question.strip()
-
+    print("question",question)
     if not question:
 
         raise HTTPException(
@@ -61,7 +60,7 @@ async def chat(
         }
 
     except Exception as e:
-
+        print(e.__cause__)
         raise HTTPException(
             status_code=500,
             detail=str(e),

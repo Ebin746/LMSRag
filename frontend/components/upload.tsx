@@ -20,7 +20,7 @@ export default function Upload() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        "/api/upload/",
+        "/api/upload",
         {
           method: "POST",
           headers: {

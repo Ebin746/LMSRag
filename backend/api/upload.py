@@ -31,7 +31,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("")
 async def upload_pdfs(
     files: list[UploadFile] = File(...),
     course_id: Optional[str] = Form(None),

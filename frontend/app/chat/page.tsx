@@ -12,6 +12,7 @@ export default function ChatPage() {
   useEffect(() => {
     setMounted(true);
     const token = localStorage.getItem("token");
+    console.log("token",token)
     if (!token) {
       router.push("/login");
     }

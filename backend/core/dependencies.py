@@ -35,13 +35,17 @@ def get_current_user(
     Extract the JWT token from the Authorization header,
     decode it, and return the authenticated user.
     """
-
+    if credentials is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Missing Authorization header",
+        )
     token = credentials.credentials
-
+    print("token",token)
     try:
 
         payload = decode_access_token(token)
-
+        print(payload)
         user_id = payload.get("user_id")
 
         if not user_id:
