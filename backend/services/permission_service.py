@@ -46,110 +46,37 @@ def get_teacher_course_ids(teacher_id: str) -> list[str]:
 # ---------------------------------------------------------
 
 def build_permission_filter(current_user):
-
     if current_user is None:
-
-        return {
-            "visibility": "public"
-        }
+        return {"visibility": "public"}
 
     role = current_user["role"]
     user_id = current_user["id"]
 
-    # -----------------------------------------------------
-    # ADMIN
-    # -----------------------------------------------------
-
     if role == "admin":
         return None
 
-    # -----------------------------------------------------
-    # STUDENT
-    # -----------------------------------------------------
-
     if role == "student":
-
         course_ids = get_student_course_ids(user_id)
-
-        print("Student Courses:", course_ids)
-
-        filters = [
-            {
-                "visibility": "public"
-            }
-        ]
-
-        for course in course_ids:
-
-            filters.append(
-                {
-                    "$and": [
-                        {
-                            "visibility": "course"
-                        },
-                        {
-                            "course_id": course
-                        }
-                    ]
-                }
-            )
-
-        return {
-            "$or": filters
-        }
-
-    # -----------------------------------------------------
-    # TEACHER
-    # -----------------------------------------------------
+        clauses = [{"visibility": "public"}]
+        if course_ids:
+            clauses.append({
+                "$and": [
+                    {"visibility": "course"},
+                    {"course_id": {"$in": course_ids}}
+                ]
+            })
+        return clauses[0] if len(clauses) == 1 else {"$or": clauses}
 
     if role == "teacher":
-
         course_ids = get_teacher_course_ids(user_id)
+        clauses = [{"visibility": "public"}, {"visibility": "teacher"}]
+        if course_ids:
+            clauses.append({
+                "$and": [
+                    {"visibility": "course"},
+                    {"course_id": {"$in": course_ids}}
+                ]
+            })
+        return {"$or": clauses}
 
-        print("Teacher Courses:", course_ids)
-
-        filters = [
-
-            {
-                "visibility": "public"
-            },
-
-            {
-                "visibility": "teacher"
-            }
-
-        ]
-
-        for course in course_ids:
-
-            filters.append(
-
-                {
-                    "$and": [
-
-                        {
-                            "visibility": "course"
-                        },
-
-                        {
-                            "course_id": course
-                        }
-
-                    ]
-                }
-
-            )
-
-        return {
-
-            "$or": filters
-
-        }
-
-    # -----------------------------------------------------
-    # Unknown Role
-    # -----------------------------------------------------
-
-    return {
-        "visibility": "public"
-    }
+    return {"visibility": "public"}
