@@ -14,41 +14,54 @@ export default function Chat() {
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const askQuestion = async () => {
-    if (!question.trim()) return;
+ const askQuestion = async () => {
 
-    setLoading(true);
+  if (!question.trim()) return;
 
-    try {
-      const token = localStorage.getItem("token");
-      console.log("token",token)
-      const res = await fetch(
-        "/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            question,
-          }),
-        }
-      );
+  setLoading(true);
 
-      const data = await res.json();
+  try {
 
-      setAnswer(data.answer);
-      setSources(data.sources || []);
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong.");
-    } finally {
-      setLoading(false);
+    const token = localStorage.getItem("token");
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
     }
-  };
 
+    const res = await fetch(
+      "/api/chat",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          question,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    setAnswer(data.answer);
+
+    setSources(data.sources || []);
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert("Something went wrong.");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
   return (
     <div className="border rounded-xl p-4 space-y-4">
 

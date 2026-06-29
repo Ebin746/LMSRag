@@ -6,9 +6,6 @@ from database.supabase_client import supabase
 # ---------------------------------------------------------
 
 def get_student_course_ids(student_id: str) -> list[str]:
-    """
-    Returns all course_ids the student is enrolled in.
-    """
 
     response = (
         supabase
@@ -23,10 +20,12 @@ def get_student_course_ids(student_id: str) -> list[str]:
 
     return [row["course_id"] for row in response.data]
 
+
+# ---------------------------------------------------------
+# Teacher Permissions
+# ---------------------------------------------------------
+
 def get_teacher_course_ids(teacher_id: str) -> list[str]:
-    """
-    Returns all course_ids assigned to the teacher.
-    """
 
     response = (
         supabase
@@ -42,71 +41,115 @@ def get_teacher_course_ids(teacher_id: str) -> list[str]:
     return [row["course_id"] for row in response.data]
 
 
-def build_permission_filter(current_user:dict):
+# ---------------------------------------------------------
+# Permission Filter
+# ---------------------------------------------------------
+
+def build_permission_filter(current_user):
+
     if current_user is None:
+
         return {
             "visibility": "public"
         }
-    role=current_user["role"]
-    user_id=current_user["id"]
 
+    role = current_user["role"]
+    user_id = current_user["id"]
 
-    if role=="admin":
+    # -----------------------------------------------------
+    # ADMIN
+    # -----------------------------------------------------
+
+    if role == "admin":
         return None
-    
-    if role=="student":
-        course_ids=get_student_course_ids(user_id)
 
-        if not course_ids:
-            return{
-                "visibility":"public"
+    # -----------------------------------------------------
+    # STUDENT
+    # -----------------------------------------------------
+
+    if role == "student":
+
+        course_ids = get_student_course_ids(user_id)
+
+        print("Student Courses:", course_ids)
+
+        filters = [
+            {
+                "visibility": "public"
             }
-        
-        return {
-            "$or":[
+        ]
+
+        for course in course_ids:
+
+            filters.append(
                 {
-                    "visibility":"public"
-                },
-                {
-                    "$and":[
+                    "$and": [
                         {
-                            "visibility":"course"
+                            "visibility": "course"
                         },
                         {
-                             "course_id":{
-                                 "$in":course_ids
-                             }
+                            "course_id": course
                         }
                     ]
                 }
-            ]
+            )
+
+        return {
+            "$or": filters
+        }
+
+    # -----------------------------------------------------
+    # TEACHER
+    # -----------------------------------------------------
+
+    if role == "teacher":
+
+        course_ids = get_teacher_course_ids(user_id)
+
+        print("Teacher Courses:", course_ids)
+
+        filters = [
+
+            {
+                "visibility": "public"
+            },
+
+            {
+                "visibility": "teacher"
+            }
+
+        ]
+
+        for course in course_ids:
+
+            filters.append(
+
+                {
+                    "$and": [
+
+                        {
+                            "visibility": "course"
+                        },
+
+                        {
+                            "course_id": course
+                        }
+
+                    ]
+                }
+
+            )
+
+        return {
+
+            "$or": filters
 
         }
-        
-    if role=="teacher":
-        course_ids=get_teacher_course_ids(user_id)
-        if not course_ids:
-            return {
-                "$or":[
-                    {
-                        "visibility":"public"
-                    },{
-                        "visibility":"teacher"
-                    },
-                    {
-                        "$and":[
-                            {
-                                "visibility":"course"
-                            },
-                            {
-                                "course_id":{
-                                    "$in":course_ids
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-   
 
-    
+    # -----------------------------------------------------
+    # Unknown Role
+    # -----------------------------------------------------
+
+    return {
+        "visibility": "public"
+    }

@@ -23,6 +23,7 @@ def retrieve_documents(
 
     # Build metadata filter for ChromaDB (only applied when provided)
     where_filter=build_permission_filter(current_user)
+    print("filer:",where_filter)
     return vector_query(
         query_embedding=query_embedding,
         top_k=settings.TOP_K,

@@ -30,7 +30,6 @@ def _chroma_to_chunk(doc: str, meta: dict, distance: float) -> dict:
         "document_id": meta.get("document_id", ""),
         "course_id":   meta.get("course_id", "") or None,
         "module_id":   meta.get("module_id", "") or None,
-        "batch_id":    meta.get("batch_id", "") or None,
         # ChromaDB cosine distance: 0 = identical, 2 = opposite.
         # Convert to a similarity score ∈ [0, 1].
         "score":       round(1 - distance / 2, 4),
@@ -47,7 +46,6 @@ def add_chunks(
     filename: str,
     course_id: Optional[str] = None,
     module_id: Optional[str] = None,
-    batch_id: Optional[str] = None,
     visibility: str = "public",
     teacher_id: Optional[str] = None,
     uploaded_by: Optional[str] = None,
@@ -73,23 +71,13 @@ def add_chunks(
         metadatas.append(
             {
                 "document_id": str(document_id),
-
                 "filename": filename,
-
                 "page": int(chunk["page"]),
-
                 "chunk_index": int(chunk["chunk_index"]),
-
                 "visibility": visibility,
-
                 "course_id": _safe_meta(course_id),
-
                 "module_id": _safe_meta(module_id),
-
-                "batch_id": _safe_meta(batch_id),
-
                 "teacher_id": _safe_meta(teacher_id),
-
                 "uploaded_by": _safe_meta(uploaded_by),
             }
         )
@@ -110,7 +98,7 @@ def query(
 ) -> list:
 
     collection = get_collection()
-
+  
     kwargs: dict = {
         "query_embeddings": [query_embedding],
         "n_results":        min(top_k, max(collection.count(), 1)),
@@ -121,7 +109,10 @@ def query(
         kwargs["where"] = where_filter
 
     results = collection.query(**kwargs)
-
+    print("=" * 80)
+    print("CHROMA FILTER")
+    print(kwargs.get("where"))
+    print("=" * 80)
     chunks = []
     documents = results.get("documents", [[]])[0]
     metadatas = results.get("metadatas", [[]])[0]
