@@ -16,18 +16,12 @@ from database.chroma_client import get_collection
 # ---------------------------------------------------------------------------
 
 def _safe_meta(value: Optional[str]) -> str:
-    """
-    ChromaDB requires metadata values to be str / int / float / bool.
-    Convert None → "" so callers don't have to think about it.
-    """
+
     return value if value is not None else ""
 
 
 def _chroma_to_chunk(doc: str, meta: dict, distance: float) -> dict:
-    """
-    Convert a single Chroma result row into the standard chunk dict
-    expected by rag_service, prompt_service, and extract_sources.
-    """
+
     return {
         "content":     doc,
         "filename":    meta.get("filename", ""),
@@ -46,7 +40,6 @@ def _chroma_to_chunk(doc: str, meta: dict, distance: float) -> dict:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
-
 def add_chunks(
     chunks: list,
     embeddings: list,
@@ -55,37 +48,49 @@ def add_chunks(
     course_id: Optional[str] = None,
     module_id: Optional[str] = None,
     batch_id: Optional[str] = None,
-    visibility: str = "all",
+    visibility: str = "public",
+    teacher_id: Optional[str] = None,
+    uploaded_by: Optional[str] = None,
 ) -> int:
-    """
-    Upsert a batch of chunks + their embeddings into ChromaDB.
 
-    Each chunk dict must have: content, page, chunk_index.
-    Returns the number of chunks stored.
-    """
     collection = get_collection()
 
-    ids       = []
+    ids = []
     documents = []
     metadatas = []
-    embeds    = []
+    embeds = []
 
     for chunk, embedding in zip(chunks, embeddings):
+
         chunk_id = str(uuid4())
 
         ids.append(chunk_id)
+
         documents.append(chunk["content"])
+
         embeds.append(embedding)
+
         metadatas.append(
             {
                 "document_id": str(document_id),
-                "filename":    filename,
-                "page":        int(chunk["page"]),
+
+                "filename": filename,
+
+                "page": int(chunk["page"]),
+
                 "chunk_index": int(chunk["chunk_index"]),
-                "course_id":   _safe_meta(course_id),
-                "module_id":   _safe_meta(module_id),
-                "batch_id":    _safe_meta(batch_id),
-                "visibility":  visibility,
+
+                "visibility": visibility,
+
+                "course_id": _safe_meta(course_id),
+
+                "module_id": _safe_meta(module_id),
+
+                "batch_id": _safe_meta(batch_id),
+
+                "teacher_id": _safe_meta(teacher_id),
+
+                "uploaded_by": _safe_meta(uploaded_by),
             }
         )
 
@@ -98,21 +103,12 @@ def add_chunks(
 
     return len(ids)
 
-
 def query(
     query_embedding: list,
     top_k: int = 5,
     where_filter: Optional[dict] = None,
 ) -> list:
-    """
-    Perform a similarity search and return the top-k chunks.
 
-    Optional `where_filter` follows the ChromaDB metadata filter syntax:
-        {"course_id": "abc-123"}
-        {"$and": [{"course_id": "..."}, {"batch_id": "..."}]}
-
-    Returns a list of chunk dicts (see _chroma_to_chunk for shape).
-    """
     collection = get_collection()
 
     kwargs: dict = {
@@ -138,9 +134,6 @@ def query(
 
 
 def delete_by_document_id(document_id: str) -> None:
-    """
-    Delete all vector chunks that belong to a given document_id.
-    Safe to call even if no chunks exist for that document.
-    """
+
     collection = get_collection()
     collection.delete(where={"document_id": str(document_id)})

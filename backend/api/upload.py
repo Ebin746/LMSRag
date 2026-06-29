@@ -34,6 +34,7 @@ router = APIRouter(
 @router.post("")
 async def upload_pdfs(
     files: list[UploadFile] = File(...),
+    visibility:str=Form("public"),
     course_id: Optional[str] = Form(None),
     module_id: Optional[str] = Form(None),
     batch_id: Optional[str] = Form(None),
@@ -76,6 +77,7 @@ async def upload_pdfs(
             doc_payload = {
                 "filename": file.filename,
                 "uploaded_by": current_user["id"],
+                "visibility":visibility
             }
 
             if course_id:
@@ -98,19 +100,26 @@ async def upload_pdfs(
             document_id = document.data[0]["id"]
 
             stored = add_chunks(
-                chunks=chunks,
-                embeddings=embeddings,
-                document_id=document_id,
-                filename=file.filename,
-                course_id=course_id,
-                module_id=module_id,
-                batch_id=batch_id,
-            )
+            chunks=chunks,
+            embeddings=embeddings,
+            document_id=document_id,
+              filename=file.filename,
 
+                visibility=visibility,
+
+                course_id=course_id,
+
+            module_id=module_id,
+
+            batch_id=batch_id,  
+
+            uploaded_by=current_user["id"],
+                )
             uploaded_documents.append(
                 {
                     "document_id": document_id,
                     "filename": file.filename,
+                    "visibility": visibility,
                     "chunks": stored,
                     "course_id": course_id,
                     "module_id": module_id,

@@ -1,5 +1,6 @@
 # app/core/dependencies.py
-
+from typing import Optional
+from fastapi import Header
 from fastapi import (
     Depends,
     HTTPException,
@@ -24,6 +25,51 @@ from database.supabase_client import supabase
 security = HTTPBearer()
 
 
+#optinal user
+
+def get_optional_user(
+    authorization: Optional[str] = Header(None),
+):
+    """
+    Returns:
+        dict -> logged in user
+        None -> guest
+    """
+
+    if authorization is None:
+        return None
+
+    if not authorization.startswith("Bearer "):
+        return None
+
+    token = authorization.split(" ")[1]
+
+    try:
+
+        payload = decode_access_token(token)
+
+        user_id = payload.get("user_id")
+
+        if not user_id:
+            return None
+
+    except JWTError:
+        return None
+
+    response = (
+        supabase
+        .table("users")
+        .select("*")
+        .eq("id", user_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
 # --------------------------------------------------------
 # Get Current User
 # --------------------------------------------------------
@@ -31,10 +77,6 @@ security = HTTPBearer()
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Extract the JWT token from the Authorization header,
-    decode it, and return the authenticated user.
-    """
     if credentials is None:
         raise HTTPException(
             status_code=401,
