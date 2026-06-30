@@ -23,7 +23,7 @@ def get_modules(
         .table("modules")
         .select("id,title,course_id")
         .eq("course_id", course_id)
-        .order("module_order")
+        .order("module_number")
         .execute()
     )
 

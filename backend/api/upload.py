@@ -37,7 +37,6 @@ async def upload_pdfs(
     visibility:str=Form("public"),
     course_id: Optional[str] = Form(None),
     module_id: Optional[str] = Form(None),
-    batch_id: Optional[str] = Form(None),
 
     current_user: dict = Depends(require_admin),
 ):
@@ -86,8 +85,6 @@ async def upload_pdfs(
             if module_id:
                 doc_payload["module_id"] = module_id
 
-            if batch_id:
-                doc_payload["batch_id"] = batch_id
 
             document = (
                 supabase
@@ -98,7 +95,7 @@ async def upload_pdfs(
             if not document.data:
                 raise Exception(document)
             document_id = document.data[0]["id"]
-
+            print("NEW UPLOAD FILE IS RUNNING")
             stored = add_chunks(
             chunks=chunks,
             embeddings=embeddings,
@@ -111,7 +108,7 @@ async def upload_pdfs(
 
             module_id=module_id,
 
-            batch_id=batch_id,  
+        
 
             uploaded_by=current_user["id"],
                 )
@@ -123,7 +120,7 @@ async def upload_pdfs(
                     "chunks": stored,
                     "course_id": course_id,
                     "module_id": module_id,
-                    "batch_id": batch_id,
+            
                 }
             )
 

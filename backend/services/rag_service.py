@@ -1,7 +1,6 @@
 # services/rag_service.py
 
 from typing import Optional
-from langchain_google_genai import ChatGoogleGenerativeAI
 from services.permission_service import build_permission_filter
 from core.config import settings
 from services.embedding_service import embed_text

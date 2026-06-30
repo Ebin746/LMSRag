@@ -44,7 +44,6 @@ for document_id, chunks in documents.items():
     print(f"Visibility  : {first.get('visibility')}")
     print(f"Course ID   : {first.get('course_id')}")
     print(f"Module ID   : {first.get('module_id')}")
-    print(f"Batch ID    : {first.get('batch_id')}")
     print(f"Uploaded By : {first.get('uploaded_by')}")
     print(f"Chunks      : {len(chunks)}")
 
