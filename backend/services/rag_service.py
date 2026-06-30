@@ -38,7 +38,7 @@ def generate_answer(
     )
 
     response = llm.invoke(prompt)
-
+    print(response)
     if isinstance(response.content, str):
         return response.content
 
