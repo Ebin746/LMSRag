@@ -9,6 +9,7 @@
 from typing import Optional
 from uuid import uuid4
 from database.chroma_client import get_collection
+from database.supabase_client import supabase
 
 
 # ---------------------------------------------------------------------------
@@ -144,7 +145,7 @@ def get_metadata_by_document_id(document_id: str) -> list:
 
 def get_all_document_metadata() -> list:
     """
-    Retrieve distinct document metadata from ChromaDB.
+    Retrieve distinct document metadata from ChromaDB and enrich with titles from Supabase.
     Groups chunk metadata by document_id.
     """
     collection = get_collection()
@@ -154,18 +155,31 @@ def get_all_document_metadata() -> list:
     
     # Group by document_id to return unique documents rather than every chunk
     documents = {}
+    course_ids = set()
+    module_ids = set()
+
     for meta in metadatas:
         doc_id = meta.get("document_id")
         if not doc_id:
             continue
+            
+        c_id = meta.get("course_id", "")
+        m_id = meta.get("module_id", "")
+        
+        if c_id:
+            course_ids.add(c_id)
+        if m_id:
+            module_ids.add(m_id)
         
         if doc_id not in documents:
             documents[doc_id] = {
                 "document_id": doc_id,
                 "filename": meta.get("filename", "Unknown"),
                 "visibility": meta.get("visibility", "public"),
-                "course_id": meta.get("course_id", ""),
-                "module_id": meta.get("module_id", ""),
+                "course_id": c_id,
+                "module_id": m_id,
+                "course_title": c_id,  # Default to ID, replace later
+                "module_title": m_id,  # Default to ID, replace later
                 "uploaded_by": meta.get("uploaded_by", ""),
                 "chunks": 1,
                 "chroma_metadata": [meta]
@@ -175,4 +189,32 @@ def get_all_document_metadata() -> list:
             if len(documents[doc_id]["chroma_metadata"]) < 3:
                 documents[doc_id]["chroma_metadata"].append(meta)
                 
-    return list(documents.values())
+    # Fetch course titles from Supabase
+    course_map = {}
+    if course_ids:
+        try:
+            course_res = supabase.table("courses").select("id,title").in_("id", list(course_ids)).execute()
+            for c in course_res.data:
+                course_map[c["id"]] = c["title"]
+        except Exception as e:
+            print("Error fetching courses:", e)
+
+    # Fetch module titles from Supabase
+    module_map = {}
+    if module_ids:
+        try:
+            module_res = supabase.table("modules").select("id,title").in_("id", list(module_ids)).execute()
+            for m in module_res.data:
+                module_map[m["id"]] = m["title"]
+        except Exception as e:
+            print("Error fetching modules:", e)
+
+    # Enrich documents with titles
+    docs_list = list(documents.values())
+    for doc in docs_list:
+        if doc["course_id"] in course_map:
+            doc["course_title"] = course_map[doc["course_id"]]
+        if doc["module_id"] in module_map:
+            doc["module_title"] = module_map[doc["module_id"]]
+
+    return docs_list

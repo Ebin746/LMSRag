@@ -95,13 +95,13 @@ export default function UploadedDocuments() {
                 {doc.course_id && (
                   <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                     <span className="font-medium text-slate-700 dark:text-slate-300 w-16">Course:</span> 
-                    <span className="truncate">{doc.course_id}</span>
+                    <span className="truncate">{doc.course_title || doc.course_id}</span>
                   </p>
                 )}
                 {doc.module_id && (
                   <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                     <span className="font-medium text-slate-700 dark:text-slate-300 w-16">Module:</span> 
-                    <span className="truncate">{doc.module_id}</span>
+                    <span className="truncate">{doc.module_title || doc.module_id}</span>
                   </p>
                 )}
                 <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700/50 mt-2">
