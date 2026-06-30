@@ -30,7 +30,16 @@ class Settings:
             768,
         )
     )
+# ----------------------------------------------------
+# Groq LLM
+# ----------------------------------------------------
 
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+    CHAT_MODEL = os.getenv(
+    "CHAT_MODEL",
+    "llama-3.3-70b-versatile"
+    )
     # ----------------------------------------------------
     # JWT Authentication
     # ----------------------------------------------------
@@ -115,7 +124,7 @@ class Settings:
         required = [
 
             "GOOGLE_API_KEY",
-
+            "GROQ_API_KEY",
             "SUPABASE_URL",
 
             "SUPABASE_KEY",

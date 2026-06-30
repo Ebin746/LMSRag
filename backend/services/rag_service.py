@@ -7,13 +7,7 @@ from core.config import settings
 from services.embedding_service import embed_text
 from services.prompt_service import build_prompt
 from services.vector_service import query as vector_query
-
-
-llm = ChatGoogleGenerativeAI(
-    model=settings.CHAT_MODEL,
-    temperature=0.4,
-)
-
+from services.llm_service import llm
 
 def retrieve_documents(
     question: str,
