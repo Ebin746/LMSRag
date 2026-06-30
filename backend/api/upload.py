@@ -20,7 +20,7 @@ from services.pdf_service import (
 )
 
 from services.embedding_service import embed_documents
-from services.vector_service import add_chunks, get_metadata_by_document_id
+from services.vector_service import add_chunks, get_metadata_by_document_id, get_all_document_metadata
 
 from core.dependencies import require_admin
 
@@ -136,3 +136,13 @@ async def upload_pdfs(
         "documents_uploaded": len(uploaded_documents),
         "documents": uploaded_documents,
     }
+
+@router.get("/documents")
+async def get_all_documents(
+    current_user: dict = Depends(require_admin),
+):
+    """
+    Get all uploaded document metadata from ChromaDB (Admin Only).
+    """
+    documents = get_all_document_metadata()
+    return {"documents": documents}

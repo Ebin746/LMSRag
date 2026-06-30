@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import Chat from "../../components/chat";
 import Upload from "../../components/upload";
+import UploadedDocuments from "../../components/uploaded-documents";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -81,6 +82,12 @@ export default function ChatPage() {
           </div>
 
         </div>
+
+        {user?.role === "admin" && (
+          <div className="w-full mt-8">
+            <UploadedDocuments />
+          </div>
+        )}
 
       </div>
 

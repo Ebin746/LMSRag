@@ -136,6 +136,9 @@ export default function Upload() {
       setCourseId("");
       setModuleId("");
       setModules([]);
+
+      // Dispatch event to refresh the global document list
+      window.dispatchEvent(new Event("documentUploaded"));
     } catch (err) {
       console.error(err);
 
