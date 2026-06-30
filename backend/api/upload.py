@@ -12,15 +12,16 @@ from fastapi import (
 
 from typing import Optional
 
-from database.supabase_client import supabase
+import uuid
 
+from database.supabase_client import supabase
 from services.pdf_service import (
     process_pdf,
     delete_pdf,
 )
 
 from services.embedding_service import embed_documents
-from services.vector_service import add_chunks, get_metadata_by_document_id, get_all_document_metadata
+from services.vector_service import add_chunks, get_metadata_by_document_id, get_all_document_metadata, delete_by_document_id
 
 from core.dependencies import require_admin
 
@@ -73,28 +74,7 @@ async def upload_pdfs(
 
             embeddings = embed_documents(texts)
 
-            doc_payload = {
-                "filename": file.filename,
-                "uploaded_by": current_user["id"],
-                "visibility":visibility
-            }
-
-            if course_id:
-                doc_payload["course_id"] = course_id
-
-            if module_id:
-                doc_payload["module_id"] = module_id
-
-
-            document = (
-                supabase
-                .table("documents")
-                .insert(doc_payload)
-                .execute()
-            )
-            if not document.data:
-                raise Exception(document)
-            document_id = document.data[0]["id"]
+            document_id = str(uuid.uuid4())
             print("NEW UPLOAD FILE IS RUNNING")
             stored = add_chunks(
             chunks=chunks,
@@ -146,3 +126,17 @@ async def get_all_documents(
     """
     documents = get_all_document_metadata()
     return {"documents": documents}
+
+@router.delete("/documents/{document_id}")
+async def delete_document(
+    document_id: str,
+    current_user: dict = Depends(require_admin),
+):
+    """
+    Delete a document and its chunks from ChromaDB (Admin Only).
+    """
+    try:
+        delete_by_document_id(document_id)
+        return {"message": "Document deleted successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
