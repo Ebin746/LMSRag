@@ -128,3 +128,16 @@ def delete_by_document_id(document_id: str) -> None:
 
     collection = get_collection()
     collection.delete(where={"document_id": str(document_id)})
+
+def get_metadata_by_document_id(document_id: str) -> list:
+    """
+    Retrieve metadata for all chunks of a specific document directly from ChromaDB.
+    """
+    collection = get_collection()
+    results = collection.get(
+        where={"document_id": str(document_id)},
+        include=["metadatas"]
+    )
+    
+    # Return the list of metadata dictionaries
+    return results.get("metadatas", [])

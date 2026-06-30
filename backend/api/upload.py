@@ -20,7 +20,7 @@ from services.pdf_service import (
 )
 
 from services.embedding_service import embed_documents
-from services.vector_service import add_chunks
+from services.vector_service import add_chunks, get_metadata_by_document_id
 
 from core.dependencies import require_admin
 
@@ -112,6 +112,7 @@ async def upload_pdfs(
 
             uploaded_by=current_user["id"],
                 )
+            chroma_metadata = get_metadata_by_document_id(document_id)
             uploaded_documents.append(
                 {
                     "document_id": document_id,
@@ -120,7 +121,7 @@ async def upload_pdfs(
                     "chunks": stored,
                     "course_id": course_id,
                     "module_id": module_id,
-            
+                    "chroma_metadata": chroma_metadata,
                 }
             )
 
