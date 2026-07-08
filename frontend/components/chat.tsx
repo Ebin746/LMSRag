@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+  sources?: Source[];
+};
 
 type Source = {
   filename: string;
@@ -9,135 +15,200 @@ type Source = {
 };
 
 export default function Chat() {
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState<Source[]>([]);
-  const [loading, setLoading] = useState(false);
-
- const askQuestion = async () => {
-
-  if (!question.trim()) return;
-
-  setLoading(true);
-
-  try {
-
-    const token = localStorage.getItem("token");
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: "Hello! I am Nestsoft's AI learning assistant. Feel free to ask me anything about your enrolled courses, and I'll find the answers for you.",
     }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-    const res = await fetch(
-      "/api/chat",
-      {
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return;
+
+    const question = input.trim();
+    setInput("");
+    
+    // Add user message
+    setMessages((prev) => [...prev, { role: "user", content: question }]);
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          question,
-        }),
-      }
-    );
+        body: JSON.stringify({ question }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setAnswer(data.answer);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.answer || "I'm sorry, I couldn't find an answer to that. Please try rephrasing your question.",
+          sources: data.sources || [],
+        },
+      ]);
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Something went wrong. Please try again later.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    setSources(data.sources || []);
+  const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
-  } catch (err) {
-
-    console.error(err);
-
-    alert("Something went wrong.");
-
-  } finally {
-
-    setLoading(false);
-
-  }
-
-};
   return (
-    <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 space-y-6 shadow-lg transition-all">
-      <h2 className="font-extrabold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-        AI Assistant
-      </h2>
-
-      <div className="relative">
-        <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask anything about the LMS resources..."
-          className="w-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl p-4 min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
-        />
-        <div className="absolute bottom-3 right-3">
-          <button
-            disabled={loading || !question.trim()}
-            onClick={askQuestion}
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                Thinking...
-              </>
-            ) : (
-              <>
-                Ask
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </>
-            )}
-          </button>
+    <div className="flex flex-col h-full bg-white border-x border-slate-100 shadow-sm">
+      {/* Header for context */}
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10 flex-shrink-0">
+        <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-slate-900">Nestsoft Learning Assistant</h2>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Online & Ready</span>
+          </div>
         </div>
       </div>
 
-
-      {answer && (
-        <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-inner mt-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`flex gap-4 max-w-3xl mx-auto ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+            
+            {/* Avatar */}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${msg.role === "user" ? "bg-slate-900" : "bg-blue-600"}`}>
+              {msg.role === "user" ? (
+                <span className="text-xs font-bold text-white">ME</span>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              )}
             </div>
-            <h3 className="font-semibold text-slate-800 dark:text-slate-200">
-              Answer
-            </h3>
+
+            {/* Message Bubble */}
+            <div className={`flex flex-col gap-2 max-w-[85%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
+              <div
+                className={`px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed whitespace-pre-wrap shadow-sm ${
+                  msg.role === "user"
+                    ? "bg-blue-600 text-white rounded-tr-sm"
+                    : "bg-white text-slate-800 border border-slate-200 rounded-tl-sm"
+                }`}
+              >
+                {msg.content}
+              </div>
+
+              {/* Sources */}
+              {msg.sources && msg.sources.length > 0 && (
+                <div className="mt-2 bg-slate-50 border border-slate-200 rounded-xl p-3 w-full max-w-sm shadow-sm">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    References
+                  </h4>
+                  <div className="flex flex-col gap-1.5">
+                    {msg.sources.map((src, si) => (
+                      <div key={si} className="flex items-center gap-2 bg-white border border-slate-100 rounded-md px-2.5 py-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="text-xs font-medium text-slate-700 truncate" title={src.filename}>{src.filename}</span>
+                        <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-auto flex-shrink-0">Page {src.page}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+        ))}
 
-          <p className="mt-2 text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
-            {answer}
-          </p>
-
-          {sources.length > 0 && (
-            <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-700/50">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Sources
-              </h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {sources.map((source, index) => (
-                  <li key={index} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-2.5 rounded-lg flex items-start gap-2 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    <div className="overflow-hidden">
-                      <p className="font-medium text-sm text-slate-800 dark:text-slate-200 truncate" title={source.filename}>
-                        {source.filename}
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Page {source.page}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+        {/* Typing Indicator */}
+        {loading && (
+          <div className="flex gap-4 max-w-3xl mx-auto">
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
             </div>
-          )}
+            <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-4 flex items-center gap-1.5 shadow-sm">
+              <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+              <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+              <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></span>
+            </div>
+          </div>
+        )}
+        
+        <div ref={bottomRef} className="h-4" />
+      </div>
+
+      {/* Input Area */}
+      <div className="p-4 sm:p-6 bg-white border-t border-slate-100 flex-shrink-0">
+        <div className="max-w-3xl mx-auto relative flex items-end gap-3">
+          <div className="relative flex-1">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder="Ask a question about your courses..."
+              disabled={loading}
+              rows={1}
+              className="w-full bg-slate-50 border border-slate-300 rounded-2xl py-3.5 pl-4 pr-12 text-[15px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all disabled:opacity-50 resize-none max-h-32"
+              style={{ minHeight: "52px" }}
+              onInput={(e) => {
+                e.currentTarget.style.height = 'auto';
+                e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 128)}px`;
+              }}
+            />
+          </div>
+          <button
+            onClick={sendMessage}
+            disabled={!input.trim() || loading}
+            className="w-[52px] h-[52px] flex items-center justify-center bg-slate-900 text-white rounded-full hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-md flex-shrink-0"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
         </div>
-      )}
+        <p className="text-center text-xs text-slate-400 mt-3 font-medium">
+          Nestsoft AI can make mistakes. Verify important information with your instructors.
+        </p>
+      </div>
     </div>
   );
 }

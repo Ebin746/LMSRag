@@ -462,11 +462,9 @@ export default function Home() {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all flex items-center gap-1.5 ${activeCategory === cat.id ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:border-blue-600 hover:text-blue-600"}`}
+                className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${activeCategory === cat.id ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:border-blue-600 hover:text-blue-600"}`}
               >
-                <span>{cat.icon}</span>
-                <span className="hidden sm:inline">{cat.label}</span>
-                <span className="sm:hidden">{cat.label.split(" ")[0]}</span>
+                {cat.label}
               </button>
             ))}
           </div>
@@ -482,12 +480,11 @@ export default function Home() {
               {filteredCategories.map((cat) => (
                 <div key={cat.id}>
 
-                  {/* Category header — solid black with blue accent line */}
-                  <div className="bg-gray-900 rounded-2xl p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-5 border-l-4 border-blue-500">
-                    <div className="text-5xl">{cat.icon}</div>
+                  {/* Category header */}
+                  <div className="bg-white rounded-2xl p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-5 border border-gray-100 border-l-8 border-l-black shadow-md">
                     <div className="flex-1">
-                      <h3 className="text-xl font-extrabold text-white mb-1">{cat.label}</h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">{cat.description}</p>
+                      <h3 className="text-xl font-extrabold text-gray-900 mb-1">{cat.label}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">{cat.description}</p>
                     </div>
                     <div className="flex-shrink-0">
                       <span className="bg-blue-600 text-white text-sm font-bold px-4 py-1.5 rounded-full">

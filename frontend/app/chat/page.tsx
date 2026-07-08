@@ -26,10 +26,9 @@ export default function ChatPage() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-slate-900">
-
+    <div className="h-screen bg-white flex flex-col text-slate-900 overflow-hidden">
       {/* Top Navigation Bar */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+      <header className="bg-white border-b border-slate-200 flex-shrink-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -39,8 +38,8 @@ export default function ChatPage() {
               </svg>
             </div>
             <div>
-              <span className="text-xl font-bold text-blue-600 tracking-tight">Nestsoft</span>
-              <span className="ml-2 text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:inline">
+              <span className="text-xl font-bold text-slate-900 tracking-tight">Nestsoft</span>
+              <span className="ml-2 text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:inline">
                 {isAdmin ? "Admin Panel" : "Learning Portal"}
               </span>
             </div>
@@ -49,9 +48,9 @@ export default function ChatPage() {
           {/* User Info + Actions */}
           <div className="flex items-center gap-4">
             {user && (
-              <div className="hidden sm:flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-sm font-medium text-gray-700">{user.name}</span>
+              <div className="hidden sm:flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1.5">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span className="text-sm font-medium text-slate-700">{user.name}</span>
                 <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
                   {user.role}
                 </span>
@@ -64,7 +63,7 @@ export default function ChatPage() {
                   localStorage.removeItem("user");
                   window.location.reload();
                 }}
-                className="text-sm font-semibold px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 transition-all"
+                className="text-sm font-semibold px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all"
               >
                 Logout
               </button>
@@ -81,21 +80,19 @@ export default function ChatPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-
-        {/* Admin View: Upload + Documents only */}
+      <main className="flex-1 overflow-hidden flex flex-col">
         {isAdmin ? (
-          <div className="space-y-8">
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto space-y-8">
             {/* Page Title */}
-            <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+            <div className="flex items-center gap-3 pb-2 border-b border-slate-200">
               <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Knowledge Base Management</h1>
-                <p className="text-sm text-gray-500">Upload and manage course materials for the AI knowledge base</p>
+                <h1 className="text-2xl font-bold text-slate-900">Knowledge Base Management</h1>
+                <p className="text-sm text-slate-500">Upload and manage course materials for the AI knowledge base</p>
               </div>
             </div>
 
@@ -108,24 +105,9 @@ export default function ChatPage() {
             <UploadedDocuments />
           </div>
         ) : (
-          /* Student / Teacher View: Chat only */
-          <div className="space-y-6">
-            {/* Page Title */}
-            <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">AI Learning Assistant</h1>
-                <p className="text-sm text-gray-500">Ask questions about your course materials</p>
-              </div>
-            </div>
-
-            <div className="max-w-3xl">
-              <Chat />
-            </div>
+          /* Student / Teacher View: Full height chat */
+          <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col relative">
+             <Chat />
           </div>
         )}
       </main>
