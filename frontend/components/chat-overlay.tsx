@@ -129,13 +129,19 @@ export default function ChatOverlay() {
 
       {/* ── Chat Panel ───────────────────────────────────────────────── */}
       <div
-        className={`fixed bottom-24 right-6 z-50 w-[370px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 origin-bottom-right overflow-hidden ${
+        className={`fixed bottom-24 right-6 z-50 w-[370px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border-2 border-gray-100 flex flex-col transition-all duration-300 origin-bottom-right overflow-hidden group hover:shadow-xl hover:border-blue-300 hover:-translate-y-1 ${
           open
-            ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 scale-90 translate-y-4 pointer-events-none"
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-90 pointer-events-none"
         }`}
-        style={{ maxHeight: "78vh" }}
+        style={{ 
+          maxHeight: "78vh",
+          transform: open ? "translateY(0)" : "translateY(1rem)"
+        }}
       >
+        {/* Top accent line on hover */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-50" />
+
         {/* Header */}
         <div className="bg-gradient-to-r from-gray-900 to-blue-900 px-5 py-4 flex items-center gap-3 flex-shrink-0">
           <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -161,7 +167,7 @@ export default function ChatOverlay() {
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-blue-50/40">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex items-end gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
               {/* Avatar */}
