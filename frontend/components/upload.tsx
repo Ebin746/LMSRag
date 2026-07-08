@@ -116,18 +116,19 @@ export default function Upload() {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-      {/* Card Header */}
-      <div className="px-6 py-5 border-b border-gray-100 bg-gray-50">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="bg-white border-0 rounded-2xl shadow-lg shadow-gray-200/50 overflow-hidden flex flex-col h-full ring-1 ring-gray-100">
+      {/* Premium Card Header */}
+      <div className="px-6 py-6 bg-gradient-to-r from-blue-700 to-blue-500 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center flex-shrink-0 shadow-inner text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Upload Documents</h2>
-            <p className="text-sm text-gray-500">Add PDF materials to the AI knowledge base</p>
+            <h2 className="text-xl font-bold text-white tracking-tight">Upload Documents</h2>
+            <p className="text-sm text-blue-100 font-medium">Add PDF materials to the AI knowledge base</p>
           </div>
         </div>
       </div>
@@ -146,19 +147,26 @@ export default function Upload() {
         )}
 
         {/* Visibility Level */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <div className="group">
+          <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-blue-600">
             Visibility Level
           </label>
-          <select
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
-            className="w-full bg-white border border-gray-300 rounded-xl px-3 py-2.5 text-gray-900 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-          >
-            <option value="public">Public — Visible to all users</option>
-            <option value="course">Course Specific</option>
-            <option value="admin">Admin Only</option>
-          </select>
+          <div className="relative">
+            <select
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-gray-900 text-sm font-medium focus:bg-white focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm appearance-none"
+            >
+              <option value="public">Public — Visible to all users</option>
+              <option value="course">Course Specific</option>
+              <option value="admin">Admin Only</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Course / Module selectors */}
@@ -197,17 +205,19 @@ export default function Upload() {
 
         {/* File Drop Zone */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">PDF Files</label>
-          <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-400 transition-all group">
-            <div className="flex flex-col items-center justify-center gap-2">
-              <svg className="w-10 h-10 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              <div className="text-sm text-center">
-                <span className="font-semibold text-blue-600">Click to browse</span>
-                <span className="text-gray-500"> or drag & drop</span>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">PDF Files</label>
+          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-blue-200 rounded-xl cursor-pointer bg-blue-50/50 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 group shadow-sm hover:shadow-md">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
               </div>
-              <span className="text-xs text-gray-400">PDF files only</span>
+              <div className="text-sm text-center px-4">
+                <span className="font-bold text-blue-700">Click to browse</span>
+                <span className="text-slate-500"> or drag & drop</span>
+              </div>
+              <span className="text-xs font-medium px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400">PDF files only (Max 50MB)</span>
             </div>
             <input
               type="file"
@@ -244,7 +254,7 @@ export default function Upload() {
         <button
           onClick={uploadPDFs}
           disabled={uploading || files.length === 0}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all flex justify-center items-center gap-2 text-sm"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex justify-center items-center gap-2 text-sm mt-4"
         >
           {uploading ? (
             <>

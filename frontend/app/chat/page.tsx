@@ -82,27 +82,51 @@ export default function ChatPage() {
       {/* Main Content */}
       <main className="flex-1 overflow-hidden flex flex-col">
         {isAdmin ? (
-          <div className="max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto space-y-8">
-            {/* Page Title */}
-            <div className="flex items-center gap-3 pb-2 border-b border-slate-200">
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
+          <div className="flex-1 w-full bg-gradient-to-br from-slate-50 to-blue-50/50 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div className="max-w-[1400px] mx-auto space-y-6">
+              
+              {/* Vibrant Dashboard Header */}
+              <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 rounded-3xl p-8 sm:p-10 shadow-xl shadow-blue-900/20 relative overflow-hidden">
+                {/* Decorative glows */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+                
+                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h1 className="text-3xl font-extrabold text-white tracking-tight mb-1">Knowledge Base Admin</h1>
+                      <p className="text-blue-200 text-sm sm:text-base font-medium max-w-xl">
+                        Manage course materials, embed new documents, and oversee the AI's training data.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="hidden lg:flex px-4 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-blue-100 text-sm font-semibold items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    System Online
+                  </div>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">Knowledge Base Management</h1>
-                <p className="text-sm text-slate-500">Upload and manage course materials for the AI knowledge base</p>
+
+              {/* Side-by-Side Dashboard Layout */}
+              <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                
+                {/* Upload Section (Left sidebar - 4 columns) */}
+                <div className="lg:col-span-4 lg:sticky lg:top-8 space-y-6">
+                  <Upload />
+                </div>
+
+                {/* Documents Section (Right main area - 8 columns) */}
+                <div className="lg:col-span-8">
+                  <UploadedDocuments />
+                </div>
+                
               </div>
             </div>
-
-            {/* Upload Component */}
-            <div className="max-w-2xl">
-              <Upload />
-            </div>
-
-            {/* Documents List */}
-            <UploadedDocuments />
           </div>
         ) : (
           /* Student / Teacher View: Full height chat */

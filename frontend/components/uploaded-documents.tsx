@@ -83,56 +83,61 @@ export default function UploadedDocuments() {
   if (documents.length === 0) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-white border-0 rounded-2xl shadow-lg shadow-gray-200/50 overflow-hidden ring-1 ring-gray-100 h-full flex flex-col">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="px-6 py-5 border-b border-gray-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Knowledge Base Repository</h2>
-            <p className="text-sm text-gray-500">{documents.length} document{documents.length !== 1 ? "s" : ""} indexed</p>
+            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Knowledge Base Repository</h2>
+            <p className="text-sm text-gray-500 font-medium">
+              <span className="text-emerald-600 font-bold">{documents.length}</span> document{documents.length !== 1 ? "s" : ""} indexed and embedded
+            </p>
           </div>
         </div>
         <button
           onClick={fetchDocuments}
-          className="text-sm text-gray-500 hover:text-blue-600 font-medium flex items-center gap-1.5 transition-colors"
+          className="text-sm text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm"
           title="Refresh"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          Refresh
+          Refresh Data
         </button>
       </div>
 
       {/* Document Grid */}
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="p-6 bg-slate-50/50 flex-1 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {documents.map((doc, idx) => (
             <div
               key={idx}
-              className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col"
+              className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-xl hover:border-blue-300 hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden group"
             >
+              {/* Top accent line on hover */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
               {/* Card Top Row */}
-              <div className="flex justify-between items-start mb-3">
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider
-                  ${doc.visibility === "public" ? "bg-green-100 text-green-700" :
-                    doc.visibility === "admin" ? "bg-red-100 text-red-700" :
-                    doc.visibility === "course" ? "bg-blue-100 text-blue-700" :
-                    "bg-gray-100 text-gray-600"}`}>
+              <div className="flex justify-between items-start mb-4">
+                <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border
+                  ${doc.visibility === "public" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                    doc.visibility === "admin" ? "bg-rose-50 text-rose-700 border-rose-200" :
+                    doc.visibility === "course" ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
+                    "bg-gray-100 text-gray-600 border-gray-200"}`}>
                   {doc.visibility}
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded">
-                    {doc.chunks} chunks
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] text-blue-700 font-bold font-mono bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-md shadow-sm">
+                    {doc.chunks} CHUNKS
                   </span>
                   <button
                     onClick={() => deleteDocument(doc.document_id)}
-                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-1.5 text-gray-400 hover:text-white hover:bg-red-500 rounded-lg transition-colors border border-transparent hover:border-red-600 shadow-sm"
                     title="Delete document"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
