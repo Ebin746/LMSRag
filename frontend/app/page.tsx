@@ -10,6 +10,7 @@ interface Course {
   duration: string;
   level: string;
   tag?: string;
+  logo: string; // URL to tech logo
 }
 
 interface Category {
@@ -18,9 +19,16 @@ interface Category {
   icon: string;
   color: string;
   accent: string;
+  headerBg: string;
   description: string;
   courses: Course[];
 }
+
+// ─── Devicons & Simple Icons CDN helpers ──────────────────────────────────────
+const di = (name: string, variant = "original") =>
+  `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}/${name}-${variant}.svg`;
+
+const si = (slug: string) => `https://cdn.simpleicons.org/${slug}`;
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const categories: Category[] = [
@@ -30,18 +38,19 @@ const categories: Category[] = [
     icon: "🤖",
     color: "bg-violet-50 border-violet-200",
     accent: "bg-violet-600",
+    headerBg: "from-violet-600 to-purple-700",
     description:
       "Master the tools that power modern AI and data analytics — from Python to Power BI, tailored for industry readiness.",
     courses: [
-      { name: "Python / Django", price: 3500, duration: "3 Months", level: "Beginner", tag: "Popular" },
-      { name: "Machine Learning", price: 4000, duration: "4 Months", level: "Intermediate", tag: "Hot" },
-      { name: "Data Science Training", price: 4000, duration: "4 Months", level: "Intermediate", tag: "Hot" },
-      { name: "Tableau Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Microsoft Power BI", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "R Programming", price: 2000, duration: "2 Months", level: "Beginner" },
-      { name: "Business Analytics", price: 3000, duration: "3 Months", level: "Intermediate" },
-      { name: "IoT Training", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "Embedded Systems", price: 3000, duration: "3 Months", level: "Intermediate" },
+      { name: "Python / Django",       price: 3500, duration: "3 Months", level: "Beginner",     tag: "Popular", logo: di("python") },
+      { name: "Machine Learning",      price: 4000, duration: "4 Months", level: "Intermediate", tag: "Hot",     logo: di("tensorflow", "original") },
+      { name: "Data Science Training", price: 4000, duration: "4 Months", level: "Intermediate", tag: "Hot",     logo: di("jupyter", "original-wordmark") },
+      { name: "Tableau Training",      price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("tableau") },
+      { name: "Microsoft Power BI",    price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("powerbi") },
+      { name: "R Programming",         price: 2000, duration: "2 Months", level: "Beginner",                     logo: di("r", "original") },
+      { name: "Business Analytics",    price: 3000, duration: "3 Months", level: "Intermediate",                 logo: si("googleanalytics") },
+      { name: "IoT Training",          price: 3500, duration: "3 Months", level: "Intermediate",                 logo: si("arduino") },
+      { name: "Embedded Systems",      price: 3000, duration: "3 Months", level: "Intermediate",                 logo: si("raspberrypi") },
     ],
   },
   {
@@ -50,22 +59,23 @@ const categories: Category[] = [
     icon: "🌐",
     color: "bg-blue-50 border-blue-200",
     accent: "bg-blue-600",
+    headerBg: "from-blue-600 to-indigo-700",
     description:
       "Expert-led web development training in Angular, Node, PHP, Laravel, Django, ASP.NET and more — online and offline in Kochi.",
     courses: [
-      { name: "Angular JS", price: 3000, duration: "2 Months", level: "Intermediate", tag: "Popular" },
-      { name: "Node JS", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Java Course", price: 3500, duration: "3 Months", level: "Beginner" },
-      { name: "Java Spring", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "PHP & MySQL", price: 2500, duration: "2 Months", level: "Beginner", tag: "Popular" },
-      { name: "Laravel Training", price: 2500, duration: "2 Months", level: "Intermediate" },
-      { name: "Codeigniter", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "MEAN Stack", price: 4000, duration: "4 Months", level: "Intermediate", tag: "Hot" },
-      { name: "WordPress Training", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "ASP.NET MVC", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "UI/UX Training", price: 3000, duration: "2 Months", level: "Beginner" },
-      { name: "Framer Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Webflow Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
+      { name: "Angular JS",       price: 3000, duration: "2 Months", level: "Intermediate", tag: "Popular", logo: di("angularjs", "original") },
+      { name: "Node JS",          price: 3000, duration: "2 Months", level: "Intermediate",                  logo: di("nodejs", "original") },
+      { name: "Java Course",      price: 3500, duration: "3 Months", level: "Beginner",                      logo: di("java", "original") },
+      { name: "Java Spring",      price: 3500, duration: "3 Months", level: "Intermediate",                  logo: di("spring", "original") },
+      { name: "PHP & MySQL",      price: 2500, duration: "2 Months", level: "Beginner",      tag: "Popular", logo: di("php", "original") },
+      { name: "Laravel Training", price: 2500, duration: "2 Months", level: "Intermediate",                  logo: di("laravel", "original") },
+      { name: "Codeigniter",      price: 2000, duration: "6 Weeks",  level: "Beginner",                      logo: di("codeigniter", "plain") },
+      { name: "MEAN Stack",       price: 4000, duration: "4 Months", level: "Intermediate",  tag: "Hot",     logo: di("mongodb", "original") },
+      { name: "WordPress",        price: 2000, duration: "6 Weeks",  level: "Beginner",                      logo: di("wordpress", "original") },
+      { name: "ASP.NET MVC",      price: 3500, duration: "3 Months", level: "Intermediate",                  logo: di("dot-net", "original") },
+      { name: "UI/UX Training",   price: 3000, duration: "2 Months", level: "Beginner",                      logo: di("figma", "original") },
+      { name: "Framer Training",  price: 2500, duration: "6 Weeks",  level: "Beginner",                      logo: si("framer") },
+      { name: "Webflow Training", price: 2500, duration: "6 Weeks",  level: "Beginner",                      logo: si("webflow") },
     ],
   },
   {
@@ -74,12 +84,13 @@ const categories: Category[] = [
     icon: "📱",
     color: "bg-emerald-50 border-emerald-200",
     accent: "bg-emerald-600",
+    headerBg: "from-emerald-600 to-teal-700",
     description:
       "Industry-expert mobile development training in Flutter, Android, and iOS — with internship and certification in Kochi since 2007.",
     courses: [
-      { name: "Flutter Training", price: 3500, duration: "3 Months", level: "Intermediate", tag: "Hot" },
-      { name: "Android Development", price: 3500, duration: "3 Months", level: "Intermediate", tag: "Popular" },
-      { name: "iPhone (iOS) Training", price: 4000, duration: "3 Months", level: "Intermediate" },
+      { name: "Flutter Training",      price: 3500, duration: "3 Months", level: "Intermediate", tag: "Hot",     logo: di("flutter", "original") },
+      { name: "Android Development",   price: 3500, duration: "3 Months", level: "Intermediate", tag: "Popular", logo: di("android", "original") },
+      { name: "iPhone (iOS) Training", price: 4000, duration: "3 Months", level: "Intermediate",                 logo: di("apple", "original") },
     ],
   },
   {
@@ -88,19 +99,20 @@ const categories: Category[] = [
     icon: "📣",
     color: "bg-orange-50 border-orange-200",
     accent: "bg-orange-500",
+    headerBg: "from-orange-500 to-red-600",
     description:
       "AI-powered digital marketing courses in Kochi covering SEO, Google Ads, Facebook, YouTube, ChatGPT, and more — with live projects.",
     courses: [
-      { name: "AI Digital Marketing", price: 3500, duration: "3 Months", level: "Beginner", tag: "New" },
-      { name: "Google SEO Certification", price: 3000, duration: "2 Months", level: "Beginner", tag: "Popular" },
-      { name: "On-Page SEO Training", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "SEO Training", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Search Engine Marketing (SEM)", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Facebook Marketing", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "YouTube Marketing", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "Social Media Marketing", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Email Marketing (MailChimp)", price: 2000, duration: "4 Weeks", level: "Beginner" },
-      { name: "Content Writing Course", price: 2000, duration: "6 Weeks", level: "Beginner" },
+      { name: "AI Digital Marketing",          price: 3500, duration: "3 Months", level: "Beginner",     tag: "New",     logo: si("openai") },
+      { name: "Google SEO Certification",      price: 3000, duration: "2 Months", level: "Beginner",     tag: "Popular", logo: di("google", "original") },
+      { name: "On-Page SEO Training",          price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("googlesearchconsole") },
+      { name: "SEO Training",                  price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("semrush") },
+      { name: "Search Engine Marketing (SEM)", price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("googleads") },
+      { name: "Facebook Marketing",            price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("facebook") },
+      { name: "YouTube Marketing",             price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("youtube") },
+      { name: "Social Media Marketing (SMM)",  price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("instagram") },
+      { name: "Email Marketing (MailChimp)",   price: 2000, duration: "4 Weeks",  level: "Beginner",                     logo: si("mailchimp") },
+      { name: "Content Writing Course",        price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("medium") },
     ],
   },
   {
@@ -109,23 +121,24 @@ const categories: Category[] = [
     icon: "🔒",
     color: "bg-red-50 border-red-200",
     accent: "bg-red-600",
+    headerBg: "from-red-600 to-rose-700",
     description:
       "Top networking & cyber security courses in Kochi — CCNA, AWS, Azure, Ethical Hacking, Firewall and more with job placement support.",
     courses: [
-      { name: "AWS Training", price: 4000, duration: "3 Months", level: "Intermediate", tag: "Hot" },
-      { name: "Ethical Hacking", price: 4000, duration: "3 Months", level: "Intermediate", tag: "Popular" },
-      { name: "CCNA Training", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "CCNP Training", price: 4000, duration: "4 Months", level: "Advanced" },
-      { name: "Cyber Security", price: 4000, duration: "3 Months", level: "Intermediate" },
-      { name: "MCSE Training", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "MCSA Training", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "VMware – Vsphere", price: 3500, duration: "2 Months", level: "Advanced" },
-      { name: "Fortigate Firewall", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "CCNA Security", price: 3500, duration: "2 Months", level: "Intermediate" },
-      { name: "System Administrator", price: 3000, duration: "3 Months", level: "Intermediate" },
-      { name: "Hardware Courses", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Networking Courses", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Software Testing", price: 3000, duration: "3 Months", level: "Beginner" },
+      { name: "AWS Training",           price: 4000, duration: "3 Months", level: "Intermediate", tag: "Hot",     logo: si("amazonwebservices") },
+      { name: "Ethical Hacking",        price: 4000, duration: "3 Months", level: "Intermediate", tag: "Popular", logo: si("kalilinux") },
+      { name: "CCNA Training",          price: 3500, duration: "3 Months", level: "Intermediate",                 logo: si("cisco") },
+      { name: "CCNP Training",          price: 4000, duration: "4 Months", level: "Advanced",                     logo: si("cisco") },
+      { name: "Cyber Security",         price: 4000, duration: "3 Months", level: "Intermediate",                 logo: si("paloaltonetworks") },
+      { name: "MCSE Training",          price: 3500, duration: "3 Months", level: "Intermediate",                 logo: si("microsoft") },
+      { name: "MCSA Training",          price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("microsoft") },
+      { name: "VMware – Vsphere",       price: 3500, duration: "2 Months", level: "Advanced",                     logo: si("vmware") },
+      { name: "Fortigate Firewall",     price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("fortinet") },
+      { name: "CCNA Security",          price: 3500, duration: "2 Months", level: "Intermediate",                 logo: si("cisco") },
+      { name: "System Administrator",   price: 3000, duration: "3 Months", level: "Intermediate",                 logo: si("linux") },
+      { name: "Hardware Courses",       price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("raspberrypi") },
+      { name: "Networking Courses",     price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("wireshark") },
+      { name: "Software Testing",       price: 3000, duration: "3 Months", level: "Beginner",                     logo: si("selenium") },
     ],
   },
   {
@@ -133,24 +146,25 @@ const categories: Category[] = [
     label: "Design & Creative",
     icon: "🎨",
     color: "bg-pink-50 border-pink-200",
-    accent: "bg-pink-500",
+    accent: "bg-pink-600",
+    headerBg: "from-pink-600 to-fuchsia-700",
     description:
       "Creative design courses covering graphic design, video editing, motion graphics, UI/UX, and 3D — from industry professionals.",
     courses: [
-      { name: "Figma Training", price: 2500, duration: "6 Weeks", level: "Beginner", tag: "Popular" },
-      { name: "Adobe Photoshop", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "Adobe Illustrator", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "Adobe Premiere Pro", price: 2500, duration: "2 Months", level: "Beginner" },
-      { name: "Adobe After Effects", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Adobe InDesign", price: 2000, duration: "6 Weeks", level: "Beginner" },
-      { name: "Final Cut Pro", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "DaVinci Resolve", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Blender Training", price: 3000, duration: "3 Months", level: "Intermediate" },
-      { name: "Toon Boom Training", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Adobe XD Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Canva Training", price: 2000, duration: "4 Weeks", level: "Beginner" },
-      { name: "Sketch Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Web Design Training", price: 2500, duration: "2 Months", level: "Beginner" },
+      { name: "Figma Training",         price: 2500, duration: "6 Weeks",  level: "Beginner",     tag: "Popular", logo: di("figma", "original") },
+      { name: "Adobe Photoshop",        price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("adobephotoshop") },
+      { name: "Adobe Illustrator",      price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("adobeillustrator") },
+      { name: "Adobe Premiere Pro",     price: 2500, duration: "2 Months", level: "Beginner",                     logo: si("adobepremierepro") },
+      { name: "Adobe After Effects",    price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("adobeaftereffects") },
+      { name: "Adobe InDesign",         price: 2000, duration: "6 Weeks",  level: "Beginner",                     logo: si("adobeindesign") },
+      { name: "Final Cut Pro",          price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("finalcutpro") },
+      { name: "DaVinci Resolve",        price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("davinciresolve") },
+      { name: "Blender Training",       price: 3000, duration: "3 Months", level: "Intermediate",                 logo: di("blender", "original") },
+      { name: "Toon Boom Training",     price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("toonboom") },
+      { name: "Adobe XD Training",      price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("adobexd") },
+      { name: "Canva Training",         price: 2000, duration: "4 Weeks",  level: "Beginner",                     logo: si("canva") },
+      { name: "Sketch Training",        price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("sketch") },
+      { name: "Web Design Training",    price: 2500, duration: "2 Months", level: "Beginner",                     logo: di("html5", "original") },
     ],
   },
   {
@@ -159,53 +173,81 @@ const categories: Category[] = [
     icon: "📊",
     color: "bg-teal-50 border-teal-200",
     accent: "bg-teal-600",
+    headerBg: "from-teal-600 to-cyan-700",
     description:
       "ERP training in Kochi by industry experts — Odoo, Power BI, Tableau, Salesforce, Azure, DevOps, Zoho Books and more with certification.",
     courses: [
-      { name: "Microsoft Azure", price: 4000, duration: "3 Months", level: "Intermediate", tag: "Hot" },
-      { name: "DevOps Training", price: 4000, duration: "3 Months", level: "Intermediate", tag: "Popular" },
-      { name: "Salesforce Training", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "Odoo Training", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Microsoft Dynamics 365", price: 3500, duration: "3 Months", level: "Intermediate" },
-      { name: "Oracle ERP", price: 4000, duration: "4 Months", level: "Advanced" },
-      { name: "Microsoft Excel", price: 2000, duration: "4 Weeks", level: "Beginner" },
-      { name: "Shopify Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Zoho Books Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Hubspot CRM", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "QuickBooks Training", price: 2500, duration: "6 Weeks", level: "Beginner" },
-      { name: "Microsoft SharePoint", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Game Design & Dev", price: 3500, duration: "4 Months", level: "Intermediate", tag: "New" },
-      { name: "CockroachDB Training", price: 3000, duration: "2 Months", level: "Intermediate" },
-      { name: "Technical Writing", price: 2000, duration: "4 Weeks", level: "Beginner" },
+      { name: "Microsoft Azure",          price: 4000, duration: "3 Months", level: "Intermediate", tag: "Hot",     logo: di("azure", "original") },
+      { name: "DevOps Training",          price: 4000, duration: "3 Months", level: "Intermediate", tag: "Popular", logo: di("docker", "original") },
+      { name: "Salesforce Training",      price: 3500, duration: "3 Months", level: "Intermediate",                 logo: si("salesforce") },
+      { name: "Odoo Training",            price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("odoo") },
+      { name: "Microsoft Dynamics 365",   price: 3500, duration: "3 Months", level: "Intermediate",                 logo: si("microsoft") },
+      { name: "Oracle ERP",               price: 4000, duration: "4 Months", level: "Advanced",                     logo: di("oracle", "original") },
+      { name: "Microsoft Excel",          price: 2000, duration: "4 Weeks",  level: "Beginner",                     logo: si("microsoftexcel") },
+      { name: "Shopify Training",         price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("shopify") },
+      { name: "Zoho Books Training",      price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("zoho") },
+      { name: "Hubspot CRM",              price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("hubspot") },
+      { name: "QuickBooks Training",      price: 2500, duration: "6 Weeks",  level: "Beginner",                     logo: si("quickbooks") },
+      { name: "Microsoft SharePoint",     price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("microsoftsharepoint") },
+      { name: "Game Design & Dev",        price: 3500, duration: "4 Months", level: "Intermediate", tag: "New",     logo: si("unity") },
+      { name: "CockroachDB Training",     price: 3000, duration: "2 Months", level: "Intermediate",                 logo: si("cockroachlabs") },
+      { name: "Technical Writing",        price: 2000, duration: "4 Weeks",  level: "Beginner",                     logo: si("googledocs") },
     ],
   },
 ];
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const levelColor: Record<string, string> = {
-  Beginner: "bg-green-100 text-green-700",
+  Beginner:     "bg-green-100 text-green-700",
   Intermediate: "bg-blue-100 text-blue-700",
-  Advanced: "bg-purple-100 text-purple-700",
+  Advanced:     "bg-purple-100 text-purple-700",
 };
 
 const tagColor: Record<string, string> = {
-  Hot: "bg-red-500",
+  Hot:     "bg-red-500",
   Popular: "bg-blue-500",
-  New: "bg-green-500",
+  New:     "bg-emerald-500",
 };
 
 const stats = [
-  { value: "18+", label: "Years of Excellence" },
+  { value: "18+",    label: "Years of Excellence" },
   { value: "10,000+", label: "Students Trained" },
-  { value: "80+", label: "Courses Available" },
-  { value: "95%", label: "Placement Rate" },
+  { value: "80+",    label: "Courses Available" },
+  { value: "95%",    label: "Placement Rate" },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Course Logo Image Component ──────────────────────────────────────────────
+function CourseLogo({ src, name, fallback }: { src: string; name: string; fallback: string }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (imgError) {
+    return (
+      <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-2xl">
+        {fallback}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center p-2 flex-shrink-0">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={name}
+        className="w-full h-full object-contain"
+        onError={() => setImgError(true)}
+        loading="lazy"
+      />
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery]       = useState("");
+  const [isMenuOpen, setIsMenuOpen]         = useState(false);
+  const [scrolled, setScrolled]             = useState(false);
   const coursesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -218,7 +260,6 @@ export default function Home() {
     coursesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Filter logic
   const filteredCategories = categories
     .map((cat) => ({
       ...cat,
@@ -236,14 +277,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
 
-      {/* ─── NAVBAR ─────────────────────────────────────────────────────────── */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white shadow-md border-b border-gray-100"
-            : "bg-white/95 backdrop-blur"
-        }`}
-      >
+      {/* ─── NAVBAR ────────────────────────────────────────────────────────── */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white shadow-md border-b border-gray-100" : "bg-white/95 backdrop-blur"}`}>
         <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
@@ -259,32 +294,19 @@ export default function Home() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <button onClick={scrollToCourses} className="hover:text-blue-600 transition-colors">Courses</button>
-            <a href="#about" className="hover:text-blue-600 transition-colors">About</a>
-            <a href="#why-us" className="hover:text-blue-600 transition-colors">Why Us</a>
+            <a href="#about"   className="hover:text-blue-600 transition-colors">About</a>
+            <a href="#why-us"  className="hover:text-blue-600 transition-colors">Why Us</a>
             <a href="#contact" className="hover:text-blue-600 transition-colors">Contact</a>
           </nav>
 
-          {/* CTA Buttons */}
+          {/* CTA */}
           <div className="hidden md:flex items-center gap-2.5">
-            <Link
-              href="/login"
-              className="text-sm font-semibold text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-all"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-sm transition-all"
-            >
-              Enroll Now
-            </Link>
+            <Link href="/login"  className="text-sm font-semibold text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-all">Login</Link>
+            <Link href="/signup" className="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-sm transition-all">Enroll Now</Link>
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          {/* Mobile hamburger */}
+          <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <div className="space-y-1.5">
               <span className={`block w-5 h-0.5 bg-gray-700 transition-transform ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
               <span className={`block w-5 h-0.5 bg-gray-700 transition-opacity ${isMenuOpen ? "opacity-0" : ""}`} />
@@ -297,25 +319,23 @@ export default function Home() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 space-y-3 shadow-lg">
             <button onClick={() => { scrollToCourses(); setIsMenuOpen(false); }} className="block w-full text-left text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Courses</button>
-            <a href="#about" onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">About</a>
-            <a href="#why-us" onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Why Us</a>
+            <a href="#about"   onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">About</a>
+            <a href="#why-us"  onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Why Us</a>
             <a href="#contact" onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Contact</a>
             <div className="flex gap-2 pt-2">
-              <Link href="/login" className="flex-1 text-center text-sm font-semibold border border-gray-200 text-gray-700 py-2 rounded-lg">Login</Link>
+              <Link href="/login"  className="flex-1 text-center text-sm font-semibold border border-gray-200 text-gray-700 py-2 rounded-lg">Login</Link>
               <Link href="/signup" className="flex-1 text-center text-sm font-semibold bg-blue-600 text-white py-2 rounded-lg">Enroll Now</Link>
             </div>
           </div>
         )}
       </header>
 
-      {/* ─── HERO ───────────────────────────────────────────────────────────── */}
+      {/* ─── HERO ──────────────────────────────────────────────────────────── */}
       <section className="relative pt-28 pb-20 px-5 overflow-hidden bg-gradient-to-b from-blue-50 to-white">
-        {/* Decorative blobs */}
         <div className="absolute top-0 right-0 w-[600px] h-[500px] bg-blue-100 rounded-full blur-[120px] opacity-40 -z-0 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-100 rounded-full blur-[100px] opacity-30 -z-0 pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto text-center">
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold mb-6 border border-blue-200 uppercase tracking-wider">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75" />
@@ -331,22 +351,20 @@ export default function Home() {
           </h1>
 
           <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Join <span className="font-semibold text-gray-700">Nestsoft TechnoMaster</span> — Kochi's leading IT training institute offering {totalCourses}+ professional courses in Web Development, AI, Data Science, Mobile Apps, Networking, Design, and more. Online &amp; Offline batches available.
+            Join <span className="font-semibold text-gray-700">Nestsoft TechnoMaster</span> — Kochi's leading IT training institute offering{" "}
+            <span className="font-semibold text-blue-600">{totalCourses}+ professional courses</span> in Web Development, AI, Data Science, Mobile Apps, Networking, Design, and more.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
             <button
               onClick={scrollToCourses}
-              className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl text-base shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl text-base shadow-lg shadow-blue-200 transition-all"
             >
-              Explore Courses
+              Explore All Courses
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </button>
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-8 py-4 rounded-xl text-base border border-gray-200 shadow-sm transition-all"
-            >
-              Contact Us
+            <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-8 py-4 rounded-xl text-base border border-gray-200 shadow-sm transition-all">
+              Talk to Advisor
             </a>
           </div>
 
@@ -362,11 +380,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── ABOUT ──────────────────────────────────────────────────────────── */}
+      {/* ─── ABOUT ─────────────────────────────────────────────────────────── */}
       <section id="about" className="py-20 px-5 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Text */}
             <div>
               <div className="inline-block text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full mb-4">
                 About Nestsoft
@@ -382,20 +399,17 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-3">
                 {["ISO Certified", "Industry Experts", "Live Projects", "Internship Support", "Job Placement", "Online & Offline"].map((tag) => (
-                  <span key={tag} className="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-full">
-                    ✓ {tag}
-                  </span>
+                  <span key={tag} className="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-full">✓ {tag}</span>
                 ))}
               </div>
             </div>
 
-            {/* Feature cards */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: "🎓", title: "Certified Training", desc: "Industry-recognized certificates upon course completion" },
-                { icon: "💼", title: "Internship Program", desc: "Hands-on experience with real-world live projects" },
-                { icon: "👨‍💻", title: "Expert Mentors", desc: "Learn from working professionals with 10+ years of experience" },
-                { icon: "🌐", title: "Flexible Learning", desc: "Online & offline batches to fit your schedule" },
+                { icon: "🎓", title: "Certified Training",   desc: "Industry-recognized certificates upon course completion" },
+                { icon: "💼", title: "Internship Program",   desc: "Hands-on experience with real-world live projects" },
+                { icon: "👨‍💻", title: "Expert Mentors",      desc: "Learn from professionals with 10+ years of industry experience" },
+                { icon: "🌐", title: "Flexible Learning",    desc: "Online & offline batches to fit your schedule" },
               ].map((f) => (
                 <div key={f.title} className="bg-gray-50 border border-gray-100 rounded-2xl p-5 hover:border-blue-200 hover:shadow-sm transition-all">
                   <div className="text-3xl mb-3">{f.icon}</div>
@@ -408,7 +422,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── WHY US ─────────────────────────────────────────────────────────── */}
+      {/* ─── WHY US ────────────────────────────────────────────────────────── */}
       <section id="why-us" className="py-16 px-5 bg-blue-600">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">Why Choose Nestsoft?</h2>
@@ -431,10 +445,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── COURSES SECTION ────────────────────────────────────────────────── */}
+      {/* ─── COURSES ───────────────────────────────────────────────────────── */}
       <section ref={coursesRef} id="courses" className="py-20 px-5 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          {/* Section header */}
+
+          {/* Header */}
           <div className="text-center mb-10">
             <div className="inline-block text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full mb-3">
               All Courses
@@ -454,25 +469,21 @@ export default function Home() {
             </svg>
             <input
               type="text"
-              placeholder="Search courses..."
+              placeholder="Search any course..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-sm transition-all"
+              className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-sm transition-all"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-lg leading-none">&times;</button>
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xl leading-none">&times;</button>
             )}
           </div>
 
-          {/* Category Filter Tabs */}
+          {/* Category Filter */}
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             <button
               onClick={() => setActiveCategory("all")}
-              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
-                activeCategory === "all"
-                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${activeCategory === "all" ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"}`}
             >
               All Domains
             </button>
@@ -480,11 +491,7 @@ export default function Home() {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all flex items-center gap-1.5 ${
-                  activeCategory === cat.id
-                    ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"
-                }`}
+                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all flex items-center gap-1.5 ${activeCategory === cat.id ? "bg-blue-600 text-white border-blue-600 shadow-sm" : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"}`}
               >
                 <span>{cat.icon}</span>
                 <span className="hidden sm:inline">{cat.label}</span>
@@ -493,56 +500,61 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Course categories */}
+          {/* No Results */}
           {filteredCategories.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
               <div className="text-5xl mb-4">🔍</div>
-              <p className="font-medium">No courses found for "<span className="text-gray-600">{searchQuery}</span>"</p>
+              <p className="font-medium">No courses found for &quot;<span className="text-gray-600">{searchQuery}</span>&quot;</p>
             </div>
           ) : (
-            <div className="space-y-14">
+            <div className="space-y-16">
               {filteredCategories.map((cat) => (
                 <div key={cat.id}>
-                  {/* Category header */}
-                  <div className={`rounded-2xl border p-6 mb-6 ${cat.color}`}>
+
+                  {/* Category Banner */}
+                  <div className={`bg-gradient-to-r ${cat.headerBg} rounded-2xl p-6 mb-6 text-white`}>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                      <div className="text-4xl">{cat.icon}</div>
+                      <div className="text-5xl">{cat.icon}</div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-extrabold text-gray-900 mb-1">{cat.label}</h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">{cat.description}</p>
+                        <h3 className="text-xl font-extrabold mb-1">{cat.label}</h3>
+                        <p className="text-sm text-white/80 leading-relaxed">{cat.description}</p>
                       </div>
-                      <div className="flex-shrink-0 text-sm font-semibold text-gray-500 bg-white/80 px-3 py-1.5 rounded-full border border-white/50">
-                        {cat.courses.length} Courses
+                      <div className="flex-shrink-0">
+                        <span className="bg-white/20 border border-white/30 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
+                          {cat.courses.length} Courses
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Course grid */}
+                  {/* Course Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {cat.courses.map((course) => (
                       <div
                         key={course.name}
                         className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all flex flex-col relative overflow-hidden group"
                       >
-                        {/* Tag badge */}
+                        {/* Hot/Popular/New Tag */}
                         {course.tag && (
                           <span className={`absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded-full ${tagColor[course.tag]}`}>
                             {course.tag}
                           </span>
                         )}
 
-                        {/* Course icon placeholder */}
-                        <div className={`w-10 h-10 rounded-xl ${cat.accent} flex items-center justify-center mb-3 flex-shrink-0`}>
-                          <span className="text-white text-lg">{cat.icon}</span>
+                        {/* Tech Logo */}
+                        <div className="mb-3">
+                          <CourseLogo src={course.logo} name={course.name} fallback={cat.icon} />
                         </div>
 
-                        {/* Course name */}
-                        <h4 className="font-bold text-gray-900 text-sm mb-1 leading-snug pr-8">{course.name}</h4>
+                        {/* Course Name */}
+                        <h4 className="font-bold text-gray-900 text-sm leading-snug mb-1 pr-10">{course.name}</h4>
 
                         {/* Duration + Level */}
-                        <div className="flex items-center gap-2 mt-1 mb-auto">
+                        <div className="flex items-center gap-2 mt-1 mb-auto flex-wrap">
                           <span className="text-xs text-gray-400 flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             {course.duration}
                           </span>
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${levelColor[course.level]}`}>
@@ -553,19 +565,19 @@ export default function Home() {
                         {/* Divider */}
                         <div className="border-t border-gray-100 my-3" />
 
-                        {/* Price + CTA */}
+                        {/* Price + Enroll */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <span className="text-xs text-gray-400 font-medium">Starts from</span>
-                            <div className="text-lg font-extrabold text-blue-600">
+                            <span className="text-[10px] text-gray-400 font-medium block">Starts from</span>
+                            <span className="text-lg font-extrabold text-blue-600">
                               ₹{course.price.toLocaleString("en-IN")}
-                            </div>
+                            </span>
                           </div>
                           <Link
                             href="/signup"
                             className={`text-xs font-bold text-white px-3 py-2 rounded-lg ${cat.accent} hover:opacity-90 transition-all shadow-sm`}
                           >
-                            Enroll
+                            Enroll →
                           </Link>
                         </div>
                       </div>
@@ -578,7 +590,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── CTA BANNER ─────────────────────────────────────────────────────── */}
+      {/* ─── CTA BANNER ────────────────────────────────────────────────────── */}
       <section className="py-20 px-5 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-10 shadow-xl shadow-blue-100">
@@ -588,16 +600,10 @@ export default function Home() {
               Join thousands of students who have transformed their careers with Nestsoft. Enroll today and get access to expert mentors, live projects, and placement support.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 font-bold px-8 py-3.5 rounded-xl text-sm transition-all shadow-sm"
-              >
+              <Link href="/signup" className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 font-bold px-8 py-3.5 rounded-xl text-sm transition-all shadow-sm">
                 Enroll Now — Get Started
               </Link>
-              <a
-                href="#contact"
-                className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold px-8 py-3.5 rounded-xl text-sm border border-blue-400 transition-all"
-              >
+              <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold px-8 py-3.5 rounded-xl text-sm border border-blue-400 transition-all">
                 Talk to an Advisor
               </a>
             </div>
@@ -605,7 +611,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── CONTACT ────────────────────────────────────────────────────────── */}
+      {/* ─── CONTACT ───────────────────────────────────────────────────────── */}
       <section id="contact" className="py-20 px-5 bg-gray-50 border-t border-gray-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -618,9 +624,9 @@ export default function Home() {
 
           <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {[
-              { icon: "📍", title: "Location", info: "Kochi, Kerala, India", sub: "Offline & Online Batches" },
-              { icon: "📞", title: "Phone", info: "+91 95393 03386", sub: "Mon–Sat, 9 AM–6 PM" },
-              { icon: "✉️", title: "Email", info: "info@nestsoft.com", sub: "We reply within 24 hours" },
+              { icon: "📍", title: "Location",  info: "Kochi, Kerala, India",   sub: "Offline & Online Batches" },
+              { icon: "📞", title: "Phone",     info: "+91 95393 03386",         sub: "Mon–Sat, 9 AM–6 PM" },
+              { icon: "✉️", title: "Email",     info: "info@nestsoft.com",       sub: "We reply within 24 hours" },
             ].map((c) => (
               <div key={c.title} className="bg-white border border-gray-100 rounded-2xl p-6 text-center shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
                 <div className="text-3xl mb-3">{c.icon}</div>
@@ -633,7 +639,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── FOOTER ─────────────────────────────────────────────────────────── */}
+      {/* ─── FOOTER ────────────────────────────────────────────────────────── */}
       <footer className="bg-gray-900 text-gray-400 py-10 px-5">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mb-8">
@@ -648,13 +654,12 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap gap-6 text-sm">
               <button onClick={scrollToCourses} className="hover:text-white transition-colors">Courses</button>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#why-us" className="hover:text-white transition-colors">Why Us</a>
+              <a href="#about"   className="hover:text-white transition-colors">About</a>
+              <a href="#why-us"  className="hover:text-white transition-colors">Why Us</a>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
               <Link href="/login" className="hover:text-white transition-colors">Login</Link>
             </div>
           </div>
-
           <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs">
             <p>© {new Date().getFullYear()} Nestsoft TechnoMaster. All rights reserved.</p>
             <p>Web Development · Data Science · AI · Mobile Apps · Networking · Design · ERP</p>
