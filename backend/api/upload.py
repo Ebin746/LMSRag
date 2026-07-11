@@ -72,7 +72,14 @@ async def upload_pdfs(
                 for chunk in chunks
             ]
 
-            embeddings = embed_documents(texts)
+            embeddings = []
+            batch_size = 50
+            for i in range(0, len(texts), batch_size):
+                batch_texts = texts[i:i + batch_size]
+                batch_embeddings = embed_documents(batch_texts)
+                if not batch_embeddings:
+                    raise HTTPException(status_code=500, detail="Failed to generate embeddings for a batch.")
+                embeddings.extend(batch_embeddings)
 
             document_id = str(uuid.uuid4())
             print("NEW UPLOAD FILE IS RUNNING")
