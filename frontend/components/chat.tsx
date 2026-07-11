@@ -86,22 +86,8 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-blue-50/30 border-x border-blue-100/50 shadow-sm">
-      {/* Header for context */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-blue-100/50 bg-white/90 backdrop-blur-md sticky top-0 z-10 flex-shrink-0 shadow-sm">
-        <div className="w-10 h-10 rounded-full bg-blue-100/50 border border-blue-200 flex items-center justify-center flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-        </div>
-        <div>
-          <h2 className="text-lg font-bold text-slate-900">Nestsoft Learning Assistant</h2>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Online & Ready</span>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col h-full bg-blue-50/90 border-2 border-transparent hover:border-blue-400 transition-colors duration-300 rounded-2xl shadow-xl shadow-blue-900/5 overflow-hidden">
+
 
       {/* Chat Messages */}
       <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6 bg-gradient-to-b from-blue-50/40 to-white/20">
@@ -205,9 +191,7 @@ export default function Chat() {
             </svg>
           </button>
         </div>
-        <p className="text-center text-xs text-slate-400 mt-3 font-medium">
-          Nestsoft AI can make mistakes. Verify important information with your instructors.
-        </p>
+
       </div>
     </div>
   );

@@ -129,8 +129,8 @@ export default function ChatPage() {
             </div>
           </div>
         ) : (
-          /* Student / Teacher View: Full height chat */
-          <div className="flex-1 min-h-0 w-full max-w-4xl mx-auto flex flex-col relative">
+          /* Student / Teacher View: Chat Box */
+          <div className="flex-1 min-h-0 w-full max-w-5xl mx-auto flex flex-col relative p-4 sm:p-6 lg:p-8">
              <Chat />
           </div>
         )}
