@@ -27,6 +27,7 @@ def retrieve_documents(
 def generate_answer(
     question: str,
     retrieved_chunks: list[dict],
+    history: list[dict] = None
 ) -> str:
     """
     Generate answer from retrieved chunks using Gemini.
@@ -35,6 +36,7 @@ def generate_answer(
     prompt = build_prompt(
         question,
         retrieved_chunks,
+        history
     )
 
     response = llm.invoke(prompt)
@@ -80,13 +82,30 @@ def extract_sources(
     return sources
 
 
+from services.prompt_service import build_standalone_query_prompt
 
 def ask_rag(
     question: str,
     current_user: dict,
+    history: list[dict] = None
 ) -> dict:
+    
+    standalone_query = question
+    
+    if history and len(history) > 0:
+        rewrite_prompt = build_standalone_query_prompt(question, history)
+        rewrite_response = llm.invoke(rewrite_prompt)
+        
+        if isinstance(rewrite_response.content, str):
+            standalone_query = rewrite_response.content.strip()
+        else:
+            standalone_query = rewrite_response.content[0]["text"].strip()
+            
+        print(f"Original Query: {question}")
+        print(f"Standalone Query: {standalone_query}")
+
     retrieved_chunks = retrieve_documents(
-        question=question,
+        question=standalone_query,
         current_user=current_user,
     )
 
@@ -105,6 +124,7 @@ def ask_rag(
     answer = generate_answer(
         question,
         retrieved_chunks,
+        history
     )
 
     sources = extract_sources(

@@ -18,4 +18,5 @@ def chat(
     return ask_rag(
         question=request.question,
         current_user=current_user,
+        history=request.history
     )
