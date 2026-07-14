@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Message = {
   role: "user" | "assistant";
@@ -177,13 +179,38 @@ export default function Chat() {
             {/* Message Bubble */}
             <div className={`flex flex-col gap-2 max-w-[85%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
               <div
-                className={`px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed whitespace-pre-wrap shadow-sm ${
+                className={`px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-sm ${
                   msg.role === "user"
-                    ? "bg-blue-600 text-white rounded-tr-sm"
-                    : "bg-white text-slate-800 border border-slate-200 rounded-tl-sm"
+                    ? "bg-blue-600 text-white rounded-tr-sm whitespace-pre-wrap"
+                    : "bg-white text-slate-800 border border-slate-200 rounded-tl-sm overflow-hidden"
                 }`}
               >
-                {msg.content}
+                {msg.role === "user" ? (
+                  msg.content
+                ) : (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
+                      ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+                      li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                      h1: ({ node, ...props }) => <h1 className="text-xl font-bold mb-2 mt-4" {...props} />,
+                      h2: ({ node, ...props }) => <h2 className="text-lg font-bold mb-2 mt-3" {...props} />,
+                      h3: ({ node, ...props }) => <h3 className="text-md font-bold mb-2 mt-3" {...props} />,
+                      pre: ({ node, ...props }) => (
+                        <pre className="bg-slate-900 text-slate-50 p-4 rounded-xl my-3 overflow-x-auto text-sm font-mono shadow-inner [&>code]:bg-transparent [&>code]:text-inherit [&>code]:p-0" {...props} />
+                      ),
+                      code: ({ node, className, ...props }) => (
+                        <code className={`${className || ""} bg-slate-100 text-pink-600 px-1.5 py-0.5 rounded-md text-[13px] font-mono`} {...props} />
+                      ),
+                      blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-slate-300 pl-4 italic my-2 text-slate-600" {...props} />,
+                      a: ({ node, ...props }) => <a className="text-blue-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer" {...props} />
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                )}
               </div>
 
               {/* Sources */}

@@ -68,20 +68,21 @@ def build_prompt(
 
     if prompt_type == "faq":
         instructions = """- Treat the provided context as the primary source of truth.
-- Be extremely concise, direct, and to the point.
-- Answer in 1-2 short sentences if possible.
+- Be extremely friendly, welcoming, and helpful. Use emojis occasionally (like 👋 or 😊).
+- Be concise, direct, and to the point. Answer in 1-3 short sentences if possible.
+- Output ONLY plain text. Do NOT use any Markdown formatting, bolding, italics, or code blocks.
 - Avoid any lengthy explanations.
 - Answer naturally in clear English.
 - Do NOT mention that you are using context.
 - Do NOT say "According to the context..."
-- Only respond with "I could not find that information in the uploaded documents." when the retrieved documents and history are completely unrelated to the user's question."""
+- Only respond with "I'm sorry, I couldn't find that information. Could you try rephrasing your question?" when the retrieved documents and history are completely unrelated."""
     else:
         instructions = """- Treat the provided context as the primary source of truth.
 - Provide a detailed and comprehensive answer to help the student learn.
 - Include examples or explanations if supported by the context.
 - Break down complex topics into easy-to-understand parts.
 - Answer naturally in clear English.
-- Use bullet points whenever they improve readability.
+- Format the output using proper Markdown (e.g., bolding, bullet points, code blocks) to improve readability.
 - Mention document names if it helps the student find more information.
 - If some detail is missing, infer it only when directly supported by the context or chat history.
 - Do NOT mention that you are using context.
