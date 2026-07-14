@@ -10,12 +10,13 @@ from services.llm_service import llm
 
 def retrieve_documents(
     question: str,
-    current_user=dict
+    current_user=dict,
+    course_id: Optional[str] = None
 ) -> list:
     query_embedding = embed_text(question)
 
     # Build metadata filter for ChromaDB (only applied when provided)
-    where_filter=build_permission_filter(current_user)
+    where_filter=build_permission_filter(current_user, course_id)
     print("filer:",where_filter)
     return vector_query(
         query_embedding=query_embedding,
@@ -87,7 +88,8 @@ from services.prompt_service import build_standalone_query_prompt
 def ask_rag(
     question: str,
     current_user: dict,
-    history: list[dict] = None
+    history: list[dict] = None,
+    course_id: Optional[str] = None
 ) -> dict:
     
     standalone_query = question
@@ -107,6 +109,7 @@ def ask_rag(
     retrieved_chunks = retrieve_documents(
         question=standalone_query,
         current_user=current_user,
+        course_id=course_id
     )
 
     print("=" * 60)

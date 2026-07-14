@@ -45,18 +45,29 @@ def get_teacher_course_ids(teacher_id: str) -> list[str]:
 # Permission Filter
 # ---------------------------------------------------------
 
-def build_permission_filter(current_user):
+def build_permission_filter(current_user, course_id: str = None):
     if current_user is None:
+        if course_id:
+            return {"$and": [{"visibility": "public"}, {"course_id": course_id}]}
         return {"visibility": "public"}
 
     role = current_user["role"]
     user_id = current_user["id"]
 
     if role == "admin":
+        if course_id:
+            return {"course_id": course_id}
         return None
 
     if role == "student":
         course_ids = get_student_course_ids(user_id)
+        
+        if course_id:
+            if course_id in course_ids:
+                return {"course_id": course_id}
+            else:
+                return {"course_id": "invalid_access"}
+
         clauses = [{"visibility": "public"}]
         if course_ids:
             clauses.append({
@@ -69,6 +80,13 @@ def build_permission_filter(current_user):
 
     if role == "teacher":
         course_ids = get_teacher_course_ids(user_id)
+        
+        if course_id:
+            if course_id in course_ids:
+                return {"course_id": course_id}
+            else:
+                return {"course_id": "invalid_access"}
+
         clauses = [{"visibility": "public"}, {"visibility": "teacher"}]
         if course_ids:
             clauses.append({
@@ -79,4 +97,6 @@ def build_permission_filter(current_user):
             })
         return {"$or": clauses}
 
+    if course_id:
+        return {"$and": [{"visibility": "public"}, {"course_id": course_id}]}
     return {"visibility": "public"}
