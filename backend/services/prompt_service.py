@@ -51,7 +51,8 @@ REWRITTEN QUESTION
 def build_prompt(
     question: str,
     search_results: list[dict],
-    history: list[dict] = None
+    history: list[dict] = None,
+    prompt_type: str = "student"
 ) -> str:
     """
     Build the prompt for the LLM.
@@ -65,6 +66,28 @@ def build_prompt(
         history_text += "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
         history_text += "\n"
 
+    if prompt_type == "faq":
+        instructions = """- Treat the provided context as the primary source of truth.
+- Be extremely concise, direct, and to the point.
+- Answer in 1-2 short sentences if possible.
+- Avoid any lengthy explanations.
+- Answer naturally in clear English.
+- Do NOT mention that you are using context.
+- Do NOT say "According to the context..."
+- Only respond with "I could not find that information in the uploaded documents." when the retrieved documents and history are completely unrelated to the user's question."""
+    else:
+        instructions = """- Treat the provided context as the primary source of truth.
+- Provide a detailed and comprehensive answer to help the student learn.
+- Include examples or explanations if supported by the context.
+- Break down complex topics into easy-to-understand parts.
+- Answer naturally in clear English.
+- Use bullet points whenever they improve readability.
+- Mention document names if it helps the student find more information.
+- If some detail is missing, infer it only when directly supported by the context or chat history.
+- Do NOT mention that you are using context.
+- Do NOT say "According to the context..."
+- Only respond with "I could not find that information in the uploaded course materials." when the retrieved documents are completely unrelated."""
+
     return f"""
 You are an intelligent AI assistant for a Learning Management System (LMS).
 
@@ -74,18 +97,7 @@ Your task is to answer the user's question using these excerpts and the provided
 
 Instructions:
 
-- Treat the provided context as the primary source of truth.
-- Be highly concise and directly answer the user's question without unnecessary filler.
-- Keep answers as short as possible while still being fully informative.
-- Avoid lengthy explanations unless explicitly requested by the user.
-- Summarize and combine information from multiple documents when appropriate.
-- Answer naturally in clear English.
-- Use bullet points whenever they improve readability and conciseness.
-- Mention document names only when strictly useful.
-- If some small detail is missing, infer it only when it is directly supported by the provided context or chat history.
-- Do NOT mention that you are using context.
-- Do NOT say "According to the context..."
-- Only respond with "I could not find that information in the uploaded documents." when the retrieved documents and history are completely unrelated to the user's question.
+{instructions}
 {history_text}
 ========================
 DOCUMENTS

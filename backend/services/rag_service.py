@@ -28,7 +28,8 @@ def retrieve_documents(
 def generate_answer(
     question: str,
     retrieved_chunks: list[dict],
-    history: list[dict] = None
+    history: list[dict] = None,
+    prompt_type: str = "student"
 ) -> str:
     """
     Generate answer from retrieved chunks using Gemini.
@@ -37,7 +38,8 @@ def generate_answer(
     prompt = build_prompt(
         question,
         retrieved_chunks,
-        history
+        history,
+        prompt_type
     )
 
     response = llm.invoke(prompt)
@@ -124,10 +126,13 @@ def ask_rag(
 
     print("=" * 60)
 
+    prompt_type = "faq" if current_user is None else "student"
+
     answer = generate_answer(
         question,
         retrieved_chunks,
-        history
+        history,
+        prompt_type
     )
 
     sources = extract_sources(
