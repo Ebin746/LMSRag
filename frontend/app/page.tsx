@@ -254,9 +254,8 @@ export default function Home() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/login"  className="text-sm font-semibold text-gray-600 hover:text-blue-600 px-4 py-2 rounded-lg transition-colors">Login</Link>
-            <Link href="/signup" className="text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-sm shadow-blue-200 transition-all">
-              Enroll Now
+            <Link href="/login" className="text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-sm shadow-blue-200 transition-all">
+              Login
             </Link>
           </div>
 
@@ -278,8 +277,7 @@ export default function Home() {
             <a href="#why-us"  onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Why Us</a>
             <a href="#contact" onClick={() => setIsMenuOpen(false)} className="block text-sm font-medium text-gray-700 py-2 hover:text-blue-600">Contact</a>
             <div className="flex gap-3 pt-2">
-              <Link href="/login"  className="flex-1 text-center text-sm font-semibold border border-gray-200 text-gray-700 py-2.5 rounded-lg">Login</Link>
-              <Link href="/signup" className="flex-1 text-center text-sm font-bold bg-blue-600 text-white py-2.5 rounded-lg">Enroll Now</Link>
+              <Link href="/login"  className="flex-1 text-center text-sm font-bold bg-blue-600 text-white py-2.5 rounded-lg">Login</Link>
             </div>
           </div>
         )}
@@ -543,7 +541,7 @@ export default function Home() {
                             </span>
                           </div>
                           <Link
-                            href="/signup"
+                            href="/login"
                             className="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow-md"
                           >
                             Enroll →
@@ -576,8 +574,8 @@ export default function Home() {
                 Join thousands of students who transformed their careers with Nestsoft. Enroll today for expert mentors, live projects, and placement support.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/signup" className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3.5 rounded-xl text-sm shadow-lg shadow-blue-900/50 transition-all">
-                  Enroll Now — Free Consultation
+                <Link href="/login" className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3.5 rounded-xl text-sm shadow-lg shadow-blue-900/50 transition-all">
+                  Login to Enroll
                 </Link>
                 <a href="#contact" className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-gray-700 text-gray-300 hover:text-white font-semibold px-8 py-3.5 rounded-xl text-sm transition-all">
                   Talk to an Advisor
@@ -642,7 +640,6 @@ export default function Home() {
               <a href="#why-us"  className="hover:text-white transition-colors">Why Us</a>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
               <Link href="/login"  className="hover:text-white transition-colors">Login</Link>
-              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">Enroll</Link>
             </div>
           </div>
 

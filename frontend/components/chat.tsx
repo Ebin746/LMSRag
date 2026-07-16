@@ -125,42 +125,7 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-full bg-blue-50/90 border-2 border-transparent hover:border-blue-400 transition-colors duration-300 rounded-2xl shadow-xl shadow-blue-900/5 overflow-hidden">
       
-      {/* Top Bar for Course Selection */}
-      {courses.length > 0 && (
-        <div className="px-6 py-4 border-b border-slate-200/60 bg-white/60 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center border border-blue-200/50 shadow-inner">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-[15px] font-bold text-slate-800 tracking-tight">Select Context</h3>
-              <p className="text-[13px] font-medium text-slate-500">Filter AI knowledge by course</p>
-            </div>
-          </div>
-          
-          <div className="relative w-full sm:w-auto">
-            <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              className="w-full sm:w-64 appearance-none bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-700 text-[14px] font-semibold rounded-xl py-2.5 pl-4 pr-10 hover:border-blue-400 hover:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm cursor-pointer"
-            >
-              <option value="">All Enrolled Courses</option>
-              {courses.map(course => (
-                <option key={course.id} value={course.id}>
-                  {course.title}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-              <svg className="fill-current h-4 w-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      )}      {/* Chat Messages */}
+      {/* Chat Messages */}
       <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6 bg-gradient-to-b from-blue-50/40 to-white/20">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex gap-4 max-w-3xl mx-auto ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
