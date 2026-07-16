@@ -75,7 +75,7 @@ def build_prompt(
 - Answer naturally in clear English.
 - Do NOT mention that you are using context.
 - Do NOT say "According to the context..."
-- Only respond with "I'm sorry, I couldn't find that information. Could you try rephrasing your question?" when the retrieved documents and history are completely unrelated."""
+- If the provided context is empty, or if the retrieved documents and history do not contain the answer, you MUST NOT answer from general knowledge. Instead, only respond with "I'm sorry, I couldn't find that information. Could you try rephrasing your question?"."""
     else:
         instructions = """- Treat the provided context as the primary source of truth.
 - Provide a detailed and comprehensive answer to help the student learn.
@@ -87,7 +87,7 @@ def build_prompt(
 - If some detail is missing, infer it only when directly supported by the context or chat history.
 - Do NOT mention that you are using context.
 - Do NOT say "According to the context..."
-- Only respond with "I could not find that information in the uploaded course materials." when the retrieved documents are completely unrelated."""
+- If the provided context is empty, or if the retrieved documents do not contain the answer, you MUST NOT answer from general knowledge. Instead, respond EXACTLY with "No document found"."""
 
     return f"""
 You are an intelligent AI assistant for a Learning Management System (LMS).
