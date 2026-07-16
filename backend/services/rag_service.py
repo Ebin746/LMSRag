@@ -135,9 +135,12 @@ def ask_rag(
         prompt_type
     )
 
-    sources = extract_sources(
-        retrieved_chunks,
-    )
+    if prompt_type == "faq":
+        sources = []
+    else:
+        sources = extract_sources(
+            retrieved_chunks,
+        )
 
     return {
         "answer": answer,
