@@ -59,10 +59,12 @@ export default function ChatOverlay() {
       const headers: HeadersInit = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
+      const history = messages.map((m) => ({ role: m.role, content: m.content }));
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers,
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, history }),
       });
 
       const data = await res.json();
